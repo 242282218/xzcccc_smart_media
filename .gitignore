@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+logs/
+*.log
+
+# Database
+*.db
+*.sqlite3
+
+# Test files
+test_*.py
+test_*.js
+
+# Build files
+dist/
+build/
+*.egg-info/
+
+# Environment variables
+.env
+.env.local
+
+# Trae specific
+.trae/
+
+# Pansou reference (separate repo)
+pansou-reference/
+quark_api_package/
