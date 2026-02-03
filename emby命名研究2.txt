@@ -1,0 +1,565 @@
+
+
+# 个人媒体库优化架构设计：Emby文件命名与管理系统详细技术报告
+
+## 1. 项目核心架构与目标定位
+
+### 1.1 系统架构总览
+
+#### 1.1.1 分层设计原则：命名层、目录层、元数据层、自动化层
+
+构建一个面向Emby优化的个人媒体库系统，必须采用严格的分层架构设计，以确保各功能模块之间的解耦与协同。**命名层**作为系统的基础，负责定义所有媒体文件的物理命名规范，必须严格遵循Emby官方文档所规定的标准，如电影类文件应采用`MovieName (year).extension`的基本格式，同时集成TRaSH Guides推荐的扩展信息，包括质量源（Quality Source）、发布组（Release Group）和版本类型（Edition Type）等非恢复性元数据。**目录层**则管理文件系统的物理组织结构，Emby官方强烈推荐为每部电影使用独立的文件夹，格式为`MovieName (year)`，这不仅有助于提高识别准确率，还能确保相关文件（如字幕、海报、预告片等）正确关联到对应的媒体条目。
+
+**元数据层**负责与外部数据源（主要是TMDB、TVDB、AniDB等）的交互，通过API获取详细的影片信息、演员表、海报艺术图等，并支持将元数据ID（如`[tmdbid=xxxx]`）直接嵌入文件名或文件夹名中，以实现精准匹配。**自动化层**则是整个系统的工作流引擎，通过集成FileBot、Sonarr、Radarr等工具，实现从下载完成到最终入库的全流程自动化处理，包括文件重命名、目录移动、元数据抓取和库刷新等操作。这种分层架构的优势在于，每一层都可以独立演进和优化，而不会对其他层造成破坏性影响。例如，当TMDB API接口发生变化时，只需更新元数据层的适配器模块；当需要支持新的媒体类型时，可以在命名层添加新的命名模式。
+
+#### 1.1.2 核心目标映射：识别准确率提升、自动化整理效率、复杂类型支持、TMDB深度集成
+
+本项目的四大核心目标与架构层次之间存在明确的映射关系。**识别准确率提升**主要通过命名层和元数据层的协同工作实现。根据Emby社区的实际反馈，单纯依赖文件名进行模糊匹配往往会导致误识别，特别是当影片名称存在重制版（Remake）、重启版（Reboot）或同名不同年的情况时。通过在文件名或文件夹名中嵌入TMDB ID（如`Action Point (2018) [tmdbid=454283]`），Emby可以直接定位到具体的元数据条目，几乎消除误匹配的可能性。
+
+**自动化整理效率**依赖于自动化层与目录层的紧密配合。TRaSH Guides的推荐方案强调，文件名中必须包含"非恢复性信息"（Non-recoverable Information），如质量源（HDTV、WEB-DL、Blu-ray、Remux）、发布组名称、版本类型（导演剪辑版、剧场版、未分级版）以及Repack/Proper状态标记。这些信息一旦丢失，无法通过文件内容分析重新获取，因此必须在命名阶段就固化下来。自动化工具（如Sonarr/Radarr）利用这些信息防止重复下载同一内容的不同版本，并在质量升级时做出智能决策。
+
+**复杂类型支持**是本项目的差异化优势所在。标准电影和剧集的命名规范相对成熟，但OVA（Original Video Animation）、SP（Special）、剧场版（Movie）等动画特有内容类型的处理则复杂得多。根据Emby社区的讨论，OVA文件可以放置在独立的`OVA`文件夹中，也可以作为`Season 00`（或`Specials`）的一部分进行管理。对于长篇动画（如《海贼王》《火影忍者》），还需要支持绝对集数（Absolute Order）命名，即`Anime Name - 001.ext`，而非传统的`S01E01`格式。这通常需要借助Absolute Series Scanner等第三方扫描器或Shoko Server等专业动漫管理工具来实现。
+
+**TMDB深度集成**贯穿所有层次。TMDB不仅是元数据的主要来源，其数据模型还直接影响命名规范的设计。例如，TMDB的"Belongs to Collection"字段用于识别影片所属合集，这要求目录层支持`Boxsets/Collection Name/`的物理结构，或在元数据层通过NFO文件定义合集关系。TMDB的多语言支持（如`zh-CN`、`en-US`、`ja-JP`）也要求命名层能够处理和保留多语言标题，尽管Emby主要使用文件夹名进行匹配，但保留原始语言标题有助于在手动识别时快速定位。
+
+### 1.2 兼容性基准
+
+#### 1.2.1 Emby官方规范遵循：电影`MovieName (Year).ext`与剧集`ShowName S##E##`基础标准
+
+Emby官方文档明确规定了媒体文件命名的基础标准，这是所有扩展规范的基石。对于电影类内容，最基本的命名格式为`MovieName (year).extension`，例如`Top Gun (1986).mp4`或`Avatar (2009).mkv`。然而，官方强烈推荐采用文件夹封装模式，即创建`MovieName (year)`文件夹，并将主视频文件、字幕、海报、预告片等所有相关文件置于其中。这种结构不仅提高了识别准确率，还便于管理多版本电影（Multi-version Movies）。在多版本场景中，所有版本文件必须位于同一文件夹内，且文件名必须以文件夹名开头，后跟` - `（空格-空格）和版本标识，如`300 (2006) - 1080p.mkv`、`300 (2006) - 4K.mkv`、`300 (2006) - extended edition.mp4`。Emby客户端会在播放时提供版本选择下拉菜单，但需要注意的是，系统最多只支持8个不同版本的显示。
+
+对于剧集类内容，基础命名规范要求文件名包含剧集名称、季号和集号。支持的格式包括：`show name - S01E01 - Episode Name.ext`、`show name S01E01 Episode Name.ext`、`anything_s01e02.ext`、`anything_1x02.ext`等多种变体。目录结构方面，标准组织方式为`Series (year)/Season #/Episode`，其中`Season #`文件夹是强制性的（在混合内容库中除外）。对于长期播出的日间节目（如肥皂剧、脱口秀），还支持按日期命名，格式为`anything_1996.11.14.ext`或`anything_1996-11-14.ext`。特别篇（Specials）通常归类于`Season 0`或`Specials`文件夹中，使用`S00E##`的集号格式，且集号必须与TMDB或TVDB上的特殊集编号完全对应。
+
+#### 1.2.2 TMDB数据模型对齐：确保文件名与TMDB API返回的标题、年份、季集信息匹配
+
+TMDB（The Movie Database）作为Emby默认的主要元数据源，其数据模型的对齐至关重要。首先，文件名中的`MovieName`应尽可能使用TMDB上的"主标题"（Primary Title），对于非英语影片，这通常是英文标题，但TMDB也支持保留原始语言标题作为备选。年份必须使用圆括号`()`包裹，且应与TMDB记录的发行年份完全一致。对于存在多个发行版本（如电影节首映与公映）的影片，通常以公映年份为准。
+
+对于剧集，TMDB的季（Season）和集（Episode）数据结构直接影响本地文件夹的组织方式。当TMDB将某部动画的OVA内容标记为"Specials"（第0季）时，本地文件应相应放置在`Season 0`或`Specials`文件夹中，并使用`S00E##`的命名格式。如果TMDB将剧场版（Movie）作为独立条目存在，而非关联到TV剧集的Specials中，则这些剧场版应作为独立电影处理，放置在电影库中，而非剧集库。TMDB ID的嵌入是实现精准匹配的关键。Emby支持多种ID标记格式，包括方括号`[tmdbid=xxxx]`、`[tmdbid-xxxx]`、`[tmdb=xxxx]`，以及花括号`{tmdbid=xxxx}`等变体。这种机制在处理名称相似或重名的内容时尤为重要。
+
+#### 1.2.3 跨平台可移植性：支持Jellyfin、Plex等衍生系统的命名兼容
+
+虽然本项目主要针对Emby优化，但良好的命名规范应具备跨平台可移植性，以支持Jellyfin（Emby的开源分支）、Plex、Kodi等其他媒体中心软件。Emby.Naming库的设计目标之一就是兼容Kodi的所有命名特性，包括电影和剧集的命名规则。TRaSH Guides的推荐方案也明确指出，其命名规范同时适用于Plex、Emby和Jellyfin，尽管这些媒体服务器主要关注文件组织和播放，而不像Sonarr/Radarr那样跟踪质量信息。
+
+在基础命名层面，三者的兼容性较好：`Movie Name (Year).ext`和`Show Name S##E##.ext`是通用标准。但在高级功能上存在差异：Plex对多版本电影的支持仅限于不同视频格式（720p vs 4K），而不支持不同"版本"（如剧场版 vs 导演剪辑版），这类情况在Plex中需要拆分为独立的库条目。相比之下，Emby通过` - `分隔符支持真正的多版本管理。因此，在设计命名规范时，如果考虑Plex兼容性，可能需要将导演剪辑版等作为独立条目处理，或使用Plex认可的"版本"标记方式。对于动画内容，Kodi通常配合Absolute Series Scanner使用，支持绝对集数命名。Jellyfin继承了Emby的大部分命名逻辑，但在某些元数据插件（如AniDB集成）上可能存在差异。因此，采用标准的`S##E##`格式（而非绝对集数）通常具有最好的跨平台兼容性，除非专门针对动漫库配置特殊扫描器。
+
+## 2. 文件命名规范体系
+
+### 2.1 基础命名标准（Emby/TMDB官方）
+
+#### 2.1.1 电影类命名：`Movie Name (Year) [Quality]-[ReleaseGroup].ext`
+
+电影类文件的命名规范需要在Emby官方标准与TRaSH Guides推荐之间找到平衡。基础格式遵循Emby官方建议：`Movie Name (Year).ext`。但为了提升管理效率和防止重复下载，应扩展为包含质量信息和发布组的完整格式。根据TRaSH Guides的详细说明，文件名中必须包含"非恢复性信息"（Non-recoverable Information），这些信息无法通过文件内容分析（如mediainfo）重新获取，包括：质量源（Quality Source，如HDTV、WEB-DL、Blu-ray、Remux）、发布组（Release Group）、版本类型（Edition Type，如Director's Cut、Theatrical、Unrated）以及Repack/Proper状态。
+
+推荐的完整命名格式为：`Movie Name (Year) [Quality]-[ReleaseGroup].ext`或`Movie Name (Year) - Edition [Quality]-[ReleaseGroup].ext`。例如：`The.Matrix (1999) [Remux-1080p]-[DECiDE].mkv`或`Blade.Runner (1982) - Final Cut [Remux-4K]-[FraMeSToR].mkv`。这种格式的优势在于：首先，Emby能够正确解析`Movie Name (Year)`部分进行元数据匹配；其次，质量信息和版本类型在Emby界面中通常会被隐藏（因为媒体服务器显示的是元数据标题而非文件名），但在文件管理器和自动化工具中清晰可见；最后，发布组信息有助于在需要时查找特定版本的字幕或报告问题。
+
+对于多版本电影，所有版本必须位于同一文件夹内，且文件名必须以文件夹名开头，后跟` - `（空格-空格）和版本描述。每个版本描述（如"1080p"、"extended edition"）将出现在Emby客户端的版本选择下拉菜单中。需要注意的是，此功能主要针对同一内容的不同质量版本设计，虽然也可用于不同剪辑版本，但可能存在一定限制。此外，Emby对单个媒体条目的版本数量有限制，最多支持8个不同版本。
+
+#### 2.1.2 剧集类命名：`Show Name (Year) - S##E## - Episode Title [Quality].ext`
+
+剧集类文件的命名规范相对复杂，因为涉及季（Season）、集（Episode）、集标题（Episode Title）以及可能的日期信息。Emby支持多种命名约定，包括标准格式`show name - S01E01 - Episode Name.ext`、紧凑格式`show name S01E01 Episode Name.ext`、旧式格式`anything_1x02.ext`（1x02表示第一季第二集），以及纯数字格式`anything_102.ext`（在某些配置下识别为S01E02）。
+
+推荐的完整格式为：`Show Name (Year) - S##E## - Episode Title [Quality].ext`。例如：`Breaking Bad (2008) - S01E01 - Pilot [WEB-DL-1080p]-[NTb].mkv`。包含年份有助于区分重启版或重制版剧集（如`Battlestar Galactica (1978)`与`Battlestar Galactica (2003)`），而集标题则便于用户快速识别内容。质量信息和发布组同样遵循TRaSH Guides的建议应包含在文件名中，尽管Emby主要使用S##E##进行匹配。
+
+对于多版本剧集（Multi-Version Episodes），命名规则与电影类似：所有版本使用相同的基础文件名（至S##E##为止），后跟` - `和版本描述。版本描述（如"Original Broadcast"、"Digital Remix"）将显示在客户端的版本选择器中。与电影一样，版本数量限制为最多8个。对于长期播出的日间节目（如新闻、脱口秀、肥皂剧），可以使用播出日期代替季集号，格式包括`anything_1996.11.14.ext`、`anything_1996-11-14.ext`或`anything_14.11.1996.ext`（取决于地区日期格式）。
+
+#### 2.1.3 年份与标题标准化：使用TMDB主标题，年份精确匹配发行日期
+
+年份和标题的标准化是确保元数据准确匹配的关键。标题应使用TMDB上的主标题（Primary Title），对于非英语内容，这通常是英文标题，但保留原始语言标题作为备选有助于手动识别。年份必须使用圆括号`()`包裹，且应与TMDB记录的发行年份一致。对于电影，这通常是影院上映年份；对于剧集，这是首播年份。
+
+在处理系列作品时，年份尤为重要。例如，`The Office (2001)`（英国原版）与`The Office (2005)`（美国翻拍版）是完全不同的剧集，缺少年份将导致匹配错误。同样，`Doctor Who (1963)`与`Doctor Who (2005)`（重启版）也需要通过年份区分。对于动画内容，TMDB可能将OVA、剧场版作为独立电影条目，而非关联到TV剧集的Specials中。在这种情况下，应将这些内容作为独立电影处理，使用电影命名规范，而非强行放入剧集的Season 0中。
+
+### 2.2 扩展命名规范（TRaSH Guides参考）
+
+#### 2.2.1 质量标识集成：分辨率、来源（BluRay/WEB-DL）、编码格式（x264/x265）
+
+TRaSH Guides提供的推荐命名方案在Emby社区和自动化下载管理器（Sonarr/Radarr）用户中广受认可。该方案强调在文件名中集成完整的质量标识信息，包括分辨率（Resolution）、来源（Source，如BluRay、WEB-DL、HDTV）、编码格式（Codec，如x264、x265、HEVC）以及动态范围（HDR、Dolby Vision）。
+
+质量标识的完整格式通常为`[Source-Resolution-Codec]`，例如`[BluRay-1080p-x264]`、`[WEB-DL-2160p-HEVC]`、`[Remux-4K-HDR]`。这种详细标识的价值在于：首先，它提供了无法从文件内容中恢复的信息——仅凭文件本身无法判断其原始来源是BluRay还是WEB-DL，也无法确定是否为Remux（直接提取原盘内容）或重新编码版本；其次，它帮助自动化工具防止重复下载，当文件名中包含`[WEB-DL-1080p]`时，Sonarr/Radarr不会再次下载相同质量的版本，但会在`[BluRay-1080p]`或`[WEB-DL-2160p]`可用时触发升级；最后，它为用户提供了清晰的质量预期，便于在多个版本间做出选择。
+
+在Recyclarr（TRaSH Guides的自动化配置工具）的配置示例中，可以看到质量定义（Quality Definition）和自定义格式（Custom Formats）的详细设置。例如，可以定义`HD Bluray + Web`配置文件，包含特定的质量定义和自定义格式ID（如`570bc9ebecd92723d2d21500f4be314c`代表Remaster，`eecf3a857724171f968a66cb5719e152`代表IMAX版本）。这些配置确保了下载和命名的一致性。
+
+#### 2.2.2 发布组标识：保留`[ReleaseGroup]`标签防止重复下载
+
+发布组（Release Group）标识是TRaSH Guides强调的另一项关键非恢复性信息。发布组是指制作和分发盗版内容的团队（在合法拥有内容的情况下，这些标识也可用于追踪原始来源）。格式通常为`-[GroupName]`或`[GroupName]`，例如`-[NTb]`、`-[DECiDE]`、`-[FraMeSToR]`。
+
+保留发布组标识的重要性体现在多个方面：首先，某些发布组以特定类型的内容著称（如专注于动画的组、专注于4K Remux的组），用户可能偏好特定发布组的质量标准；其次，在搜索字幕时，字幕文件通常与特定发布组的视频文件时间轴同步，如果文件名中包含发布组信息，可以更容易找到匹配的字幕；最后，如果某个发布组的版本存在已知问题（如音画不同步、编码错误），通过发布组标识可以快速识别并替换。在自动化工作流中，Sonarr/Radarr可以配置为优先选择特定发布组，或在文件名中强制包含发布组标识。这有助于维护库的一致性和质量。
+
+#### 2.2.3 版本控制标记：`Extended`、`Director's Cut`、`Unrated`等版本后缀
+
+版本类型（Edition Type）标记用于区分同一影片的不同剪辑版本，如剧场版（Theatrical）、导演剪辑版（Director's Cut）、加长版（Extended）、未分级版（Unrated）、终极版（Ultimate）等。这些标记应放置在文件名中，通常位于年份之后、质量标识之前，格式为` - Edition`或`[Edition]`。
+
+例如：
+- `Zack Snyder's Justice League (2021) - Director's Cut [Remux-4K]-[FraMeSToR].mkv`
+- `The Lord of the Rings: The Fellowship of the Ring (2001) - Extended [BluRay-1080p-x264]-[D-Z0N3].mkv`
+- `Deadpool (2016) - Unrated [WEB-DL-1080p]-[NTb].mkv`
+
+在Emby的多版本管理界面中，如果遵循`Movie Name (Year) - Edition.ext`的命名规范，版本描述（如"Director's Cut"）将显示在版本选择下拉菜单中。然而，需要注意的是，Emby的"Grouping"功能会将这些版本合并为一个条目，用户需要通过下拉菜单选择特定版本，这可能不如将不同版本显示为独立条目直观。如果希望每个版本都显示为独立条目（并手动添加到合集中），可以避免使用` - `分隔符，但这将失去多版本管理的功能。
+
+### 2.3 特殊字符与国际化处理
+
+#### 2.3.1 字符清理规则：自动替换冒号、斜杠等非法字符为短横线或空格
+
+文件系统对文件名中的字符有严格限制，而电影标题中常包含冒号（:）、斜杠（/、\）、问号（?）、星号（*）等非法字符。因此，必须实施字符清理规则，将这些字符替换为短横线（-）或空格。例如：
+- `Avengers: Endgame (2019)` → `Avengers - Endgame (2019)`或`Avengers Endgame (2019)`
+- `Lord of the Rings: The Fellowship of the Ring (2001)` → `Lord of the Rings - The Fellowship of the Ring (2001)`
+
+Emby的命名解析引擎通常能够处理这些替换，在匹配时会忽略冒号或将其视为空格。然而，为了文件系统的兼容性和跨平台可移植性，最好在命名阶段就进行清理。自动化工具如FileBot和Sonarr/Radarr内置了字符清理功能，可配置替换规则。
+
+#### 2.3.2 多语言标题优先级：原始语言标题优先，保留TMDB本地化标题作为备选
+
+对于非英语内容（如日本动画、韩国电影、欧洲艺术片），存在原始语言标题与英文标题的选择问题。TMDB为每个条目提供多语言标题，包括原始语言标题（Original Title）和本地化标题（Localized Title）。
+
+推荐的策略是：在文件名中使用英文标题（或用户界面的主要语言标题），以便在文件管理器中快速识别；同时，通过Emby的元数据管理功能保留原始语言标题作为"Original Title"字段，并在NFO文件中记录多语言标题。tinyMediaManager等工具支持抓取英文标题并存储在专门的`<english_title>`字段中，同时保留主标题和原始标题。
+
+例如，对于《千与千寻》：
+- 文件名：`Spirited Away (2001) [BluRay-1080p]-[D-Z0N3].mkv`
+- NFO元数据：包含`<title>千と千尋の神隠し</title>`（原始标题）、`<originaltitle>千と千尋の神隠し</originaltitle>`、`<english_title>Spirited Away</english_title>`
+
+这种处理方式既保证了文件系统的兼容性（避免日文字符可能导致的编码问题），又在媒体库中保留了完整的多语言信息。
+
+## 3. 复杂媒体类型支持架构
+
+### 3.1 标准类型处理
+
+#### 3.1.1 电影（Movies）：单文件与多版本（Multi-version）结构
+
+电影类内容的标准处理相对简单，但多版本管理需要特别注意。如前所述，多版本电影必须位于同一文件夹内，且文件名遵循`Movie Name (Year) - Version.ext`的格式。版本描述可以是质量相关（1080p、4K、720p）或内容相关（extended edition、directors cut、3D）。
+
+对于DVD和Blu-ray原盘结构，Emby也提供支持。DVD结构必须包含`VIDEO_TS`子文件夹或`VIDEO_TS.IFO`文件；Blu-ray结构必须包含`BDMV`子文件夹。这些结构应放置在以电影名命名的文件夹内，如`\Movies\Alien (1979)\VIDEO_TS\`。ISO格式同样受支持，建议在文件名中包含`.dvd`或`.bluray`以指示类型，如`Alien (1979).dvd.iso`。
+
+Extras（花絮内容）可以存储在电影文件夹下的特定子文件夹中，包括`extras`、`specials`、`shorts`、`scenes`、`featurettes`、`behind the scenes`、`deleted scenes`、`interviews`、`trailers`等。这些子文件夹中的视频文件将作为Extras显示在Emby的影片详情页中。
+
+#### 3.1.2 剧集（TV Series）：季文件夹（Season ##）与集数编号标准化
+
+剧集类内容的标准结构为`Series (year)/Season #/Episode`。`Season ##`文件夹是强制性的（在混合内容库中除外），且集数编号应使用标准的S##E##格式（如S01E01、S02E15）。目录结构方面，标准组织方式为`Series (year)/Season #/Episode`，其中`Season #`文件夹是强制性的（在混合内容库中除外）。对于长期播出的日间节目（如肥皂剧、脱口秀），还支持按日期命名，格式为`anything_1996.11.14.ext`或`anything_1996-11-14.ext`。
+
+特别篇（Specials）通常归类于`Season 0`或`Specials`文件夹中，使用`S00E##`的集号格式，且集号必须与TMDB或TVDB上的特殊集编号完全对应。对于多集文件（如两集连播），Emby支持`S01E01-E02`格式；对于分割集（单集分为多个文件），可以使用`S01E01.1`、`S01E01.2`或`S01E01 - Part 1`、`S01E01 - Part 2`格式。
+
+### 3.2 动画与特殊内容类型
+
+#### 3.2.1 OVA（原创动画录影带）处理策略
+
+##### 3.2.1.1 目录隔离方案：独立`OVAs`文件夹 vs `Season 00`特殊季整合
+
+OVA（Original Video Animation）的处理是动画媒体库管理中的复杂问题。根据Emby社区的讨论，主要有两种处理策略：目录隔离方案和Season 00整合方案。
+
+**目录隔离方案**为每个动画系列创建独立的`OVA`文件夹，与`Season 01`、`Season 02`等并列。例如：
+```
+Anime/
+  Kono Subarashii Sekai ni Shukufuku wo! (2016)/
+    Season 01/
+    Season 02/
+    OVA/
+      OVA 01 - Title.ext
+      OVA 02 - Title.ext
+    Movie/
+      Kono Subarashii Sekai ni Shukufuku wo! Kurenai Densetsu (2019)/
+```
+
+这种方案的优点是结构清晰，OVA与正篇内容物理分离；缺点是Emby可能无法自动识别`OVA`文件夹的内容，需要手动配置扫描器或使用特殊命名（如将OVA文件命名为`S00E##`并放入`Season 0`文件夹）。根据Emby社区的大型动漫库测试，直接使用`OVA/`文件夹存放OVA内容时，如果该文件夹内包含多个子文件夹（如不同OVA系列），Emby会错误地将所有OVA合并显示，丢失各自的独立元数据。
+
+**Season 00整合方案**将所有OVA和特别篇放入`Season 0`或`Specials`文件夹，使用`S00E##`命名。这是Emby官方推荐的标准方式，兼容性最好。但缺点是如果OVA数量众多或跨越多个系列，管理起来可能混乱。推荐的做法是：在`Season 00`内创建子文件夹按年份或类型组织，但子文件夹名称不能包含"Special"关键词以避免扫描器混淆，建议使用`2000s`、`2010s`等年代标识或`Crossover`、`Recap`等类型标识。
+
+##### 3.2.1.2 命名标识：`Anime Name - OVA - XX - Title.ext`或`S00E##`映射
+
+在命名层面，OVA文件可以采用两种格式：
+1. **绝对编号格式**：`Anime Name - OVA - XX - Title.ext`，如`KonoSuba - OVA - 01 - Hot Springs Trip.mkv`
+2. **标准季集格式**：`Anime Name - S00E## - Title.ext`，如`KonoSuba - S00E01 - Hot Springs Trip.mkv`
+
+第二种格式（S00E##）具有更好的兼容性，因为Emby的标准扫描器原生支持这种格式。第一种格式可能需要配合Absolute Series Scanner或AniDB插件使用。OVA编号应与TMDB或TVDB上的特别篇编号对应。例如，如果TMDB中某OVA被标记为Season 0, Episode 3，则本地文件必须命名为`S00E03`才能自动匹配。
+
+##### 3.2.1.3 AniDB ID集成：通过Shoko或Hama插件实现OVA元数据精准匹配
+
+由于TMDB对动画OVA的覆盖不如AniDB全面，对于复杂的动画库，建议集成AniDB作为辅助或主要元数据源。这可以通过以下方式实现：
+- **Shoko Server**：一个专门用于动漫管理的元数据服务器，可以自动识别动画文件，从AniDB获取元数据，并重命名文件以符合Emby的规范。它通过文件哈希（ED2K哈希）直接匹配AniDB的精确文件条目，无需依赖文件名解析，识别准确率接近100%。
+- **Hama插件**（适用于Plex，但类似概念可用于Emby）：使用AniDB ID进行精准匹配。
+- **Absolute Series Scanner**：一个第三方扫描器，支持绝对集数命名和AniDB元数据。
+
+通过将AniDB ID嵌入文件名（如`[anidbid=xxxxx]`）或NFO文件，可以实现与Emby的精准匹配。例如，在NFO文件中嵌入：
+```xml
+<tvshow>
+  <title>Attack on Titan</title>
+  <id>9348</id>  <!-- AniDB ID -->
+</tvshow>
+```
+
+#### 3.2.2 SP（特别篇）与剧场版处理
+
+##### 3.2.2.1 Specials文件夹规范：`Specials`或`Season 0`作为统一容器
+
+特别篇（SP）和OVA通常共享相同的处理方式：使用`Specials`或`Season 0`文件夹作为统一容器。Emby官方文档明确支持`season-specials-poster.jpg`等命名格式用于Specials文件夹的海报。对于剧集的Extras（花絮），可以在季文件夹内使用文件名后缀标识，如`-behindthescenes`、`-deleted`、`-featurette`、`-interview`、`-scene`、`-short`、`-trailer`等。
+
+##### 3.2.2.2 集数映射规则：使用`S00E##`对应TMDB/Absolute Series Scanner的特殊集编号
+
+集数映射是确保元数据正确匹配的关键。对于Specials（第0季），集号必须严格对应TMDB或TVDB上的编号。例如，如果TMDB将某圣诞特别篇标记为Season 0, Episode 5，则本地文件必须命名为`S00E05`，而非`S00E01`。对于使用Absolute Series Scanner的动画库，集数映射可能基于绝对编号（Absolute Order），即忽略季的概念，按播出顺序连续编号。这适用于长篇动画如《海贼王》《火影忍者》，其中第1集到第100集可能跨越多个"季"。
+
+##### 3.2.2.3 剧场版（Movies）与TV动画的区分：基于TMDB条目类型自动分类
+
+剧场版（Movies）与TV动画的区分应基于TMDB的条目类型。如果TMDB将某内容标记为Movie（即使它是基于TV动画的剧场版），则应将其作为独立电影处理，放置在电影库中；如果TMDB将其标记为TV Special（属于某TV剧集的Specials季），则应放置在剧集库的`Season 0`中。例如，《为美好的世界献上祝福！》的剧场版`Kurenai Densetsu`在TMDB上是独立电影条目，因此应创建文件夹`Kono Subarashii Sekai ni Shukufuku wo! Kurenai Densetsu (2019)/`并放入电影库，而非TV剧集的Specials文件夹。
+
+#### 3.2.3 绝对集数（Absolute Order）支持
+
+##### 3.2.3.1 连续编号方案：适用于长篇动画（如`One Piece - 001-100`）
+
+对于长篇动画，绝对集数（Absolute Order）是一种更直观的组织方式。在这种方案下，文件命名为`Anime Name - ###.ext`，如`One Piece - 001.mkv`、`One Piece - 002.mkv`，而不使用`S01E01`格式。这种命名方式避免了因季划分变化（不同地区或不同数据库的季划分可能不同）导致的混乱。然而，Emby的标准扫描器不支持绝对集数命名，需要配合Absolute Series Scanner或Shoko Server使用。这些工具会将绝对集数映射到TMDB/TVDB的季集结构，以便正确获取元数据。
+
+##### 3.2.3.2 混合排序兼容：同时支持绝对集数与季集双重视图
+
+理想的动画库应支持双重视图：既保留绝对集数的物理命名（便于文件管理），又在Emby中显示为标准的季集结构（便于浏览和元数据匹配）。这可以通过以下方式实现：
+- 使用Shoko Server管理文件，它内部维护绝对集数到季集的映射，并向Emby输出标准的季集结构。
+- 使用Emby的"Season"视图功能，即使物理文件使用绝对命名，也可以通过元数据强制分组到季中。
+- 对于支持多版本的Emby，可以创建符号链接（Symlink）或硬链接，使同一文件同时存在于`Absolute`文件夹和`Season ##`文件夹中，但这会增加管理复杂性。
+
+## 4. 多语言与多字幕版本管理
+
+### 4.1 多语言音频版本处理
+
+#### 4.1.1 文件级多版本：使用`MovieName (Year) - Language.ext`区分不同语言音轨
+
+对于包含多语言音轨的媒体文件，有两种管理策略：文件级多版本和容器内多音轨。文件级多版本将不同语言版本作为独立文件存储，使用`MovieName (Year) - Language.ext`的命名格式。例如：
+```
+Movie Name (2023)/
+  Movie Name (2023) - English.mkv
+  Movie Name (2023) - Japanese.mkv
+  Movie Name (2023) - Chinese.mkv
+```
+
+这种方案的优点是每个文件独立，便于管理和删除不需要的语言版本；缺点是占用更多存储空间（视频流重复）。在Emby中，这些版本会显示在多版本选择菜单中，用户可以按需切换。
+
+#### 4.1.2 容器内多音轨：优先使用MKV封装多音轨，减少文件冗余
+
+更高效的方案是使用MKV（Matroska）容器封装多音轨，即单个文件包含多个音频流（如日语原声、英语配音、国语配音）。这种方案显著节省存储空间，且便于管理。Emby支持在播放时选择音轨，并可以设置默认音轨和备选音轨优先级。对于自动化工具，FileBot和Sonarr/Radarr支持在重命名时保留多音轨信息，或在文件名中标识音轨语言（如`[JA+EN+ZH]`），但这需要特定的脚本配置。
+
+**对比分析**：
+
+| 维度 | 文件级多版本 | 容器内多音轨 |
+|------|-------------|-------------|
+| 存储效率 | 低（视频流重复） | 高（共享视频流） |
+| 管理复杂度 | 高（多个文件需同步维护） | 低（单一文件） |
+| Emby版本限制 | 受8版本限制 | 不受限制（音轨数取决于容器） |
+| 客户端兼容性 | 高（任何播放器） | 中（需支持MKV和多音轨切换） |
+| 元数据准确性 | 中（可能识别为不同版本） | 高（单一条目，多音轨选项） |
+
+#### 4.1.3 默认语言标记：通过Emby元数据设置默认音轨与备选音轨优先级
+
+在Emby的元数据管理界面中，可以为每个媒体条目设置默认音轨和字幕轨道。对于多音轨文件，可以指定日语为默认（针对动画），或根据用户偏好设置。这些设置存储在Emby的数据库中，而非文件系统中，因此需要在Emby中进行配置。服务器端配置路径：Emby Server Dashboard → Library → Manage Library → Advanced → Preferred audio language。设置后，Emby会优先选择匹配该语言的音轨，如果文件包含多音轨且未设置默认标志。
+
+### 4.2 字幕文件命名规范
+
+#### 4.2.1 外部字幕标准：`MovieName (Year).lang.srt`或`MovieName (Year).lang.forced.srt`
+
+Emby支持外部字幕文件，命名规范为`MovieName (Year).lang.srt`或`MovieName (Year).lang.forced.srt`，其中`lang`是语言代码。字幕文件应与视频文件位于同一文件夹内。对于多版本视频（如`Movie (2020) - 1080p.mkv`和`Movie (2020) - 4K.mkv`），字幕文件可以命名为`Movie (2020).en.srt`（适用于所有版本）或`Movie (2020) - 1080p.en.srt`（仅适用于特定版本）。Emby会优先匹配特定版本的字幕，再匹配通用字幕。
+
+特殊字幕类型的标识：
+- `MovieName (Year).zh.forced.srt`：强制字幕，用于翻译外语片段或屏幕文字
+- `MovieName (Year).en.sdh.srt`：听障辅助字幕，包含音效描述
+- `MovieName (Year).en.cc.srt`：隐藏式字幕，通常从广播信号提取
+
+#### 4.2.2 语言代码标准化：采用ISO 639-1（zh, en, ja）或639-2（chi, eng, jpn）双字母/三字母代码
+
+语言代码应遵循ISO标准：
+- **ISO 639-1**（双字母）：`en`（英语）、`zh`（中文）、`ja`（日语）、`ko`（韩语）
+- **ISO 639-2**（三字母）：`eng`（英语）、`chi`（中文）、`jpn`（日语）
+
+Emby支持这两种格式，但双字母代码更为常见。对于中文，还可以细分`zh-cn`（简体中文）、`zh-tw`（繁体中文）、`zh-hk`（香港繁体）。重要发现：两位代码（如`en`、`de`）和三位代码（如`eng`、`ger`）都被支持；完整语言名（如`english`、`german`）**仅在英文时有效**，其他语言使用完整名（如`deutsch`）不会被识别。
+
+#### 4.2.3 字幕类型标识：`forced`（强制）、`sdh`（听障辅助）、`cc`（隐藏字幕）后缀
+
+字幕类型标识帮助Emby正确分类和显示字幕选项：
+- **Forced**（强制字幕）：`Movie.en.forced.srt`——仅在特定场景显示（如外星语言翻译），即使主字幕关闭也会显示。
+- **SDH**（Subtitles for the Deaf and Hard of hearing）：`Movie.en.sdh.srt`——包含音效描述（如"[爆炸声]"、"[音乐播放]"）。
+- **CC**（Closed Captions）：`Movie.en.cc.srt`——类似SDH，但通常指隐藏字幕。
+
+这些标识可以组合使用，如`Movie.eng.forced.sdh.srt`（听障辅助强制字幕），但通常Forced和SDH是互斥的。**Default标记**：`Movie.eng.default.srt`将该字幕设为默认激活字幕（当客户端配置为播放默认字幕时）。
+
+### 4.3 多版本冲突避免
+
+#### 4.3.1 版本优先级算法：基于质量、语言、文件大小自动选择默认播放版本
+
+当存在多个版本时（多质量、多语言），Emby需要确定默认播放哪个版本。虽然Emby本身不提供复杂的优先级算法，但可以通过命名策略和元数据配置实现类似效果。**命名排序策略**：Emby按字母顺序排序版本，因此可以通过命名控制默认版本，如将首选版本命名为`Movie Name (Year) - 1 Default 1080p.ext`或确保其在字母排序中靠前。
+
+**质量优先级**（用于自动化工具如Radarr）：
+```
+SDTV < HDTV < WEBDL-1080p < Bluray-1080p < Remux-1080p < Bluray-2160p < Remux-2160p
+```
+
+**语言优先级**：在多语言版本中，可以通过命名顺序或Emby的"Preferred audio language"设置控制默认语言。
+
+#### 4.3.2 重复文件检测：使用文件哈希与Permalink功能识别跨目录重复内容
+
+重复文件检测是媒体库维护的重要功能。检测方案包括：
+1. **文件哈希比对**：计算视频文件的CRC32、MD5或SHA1哈希，识别完全相同的文件。对于大文件，可以使用快速哈希（如前1MB的哈希）。
+2. **Permalink功能**：Emby的Permalink功能允许将同一物理文件映射到多个库位置，而无需实际复制文件。这对于处理跨季内容或合集特别有用。
+3. **文件名相似度**：使用模糊匹配算法（如Levenshtein距离）识别命名相似但可能重复的文件。
+
+实施建议：定期运行重复文件扫描工具（如dupeGuru、rmlint）；对于确认的重复文件，保留质量最高的版本，删除或归档其他版本；对于需要在多个位置显示的内容，使用Emby的Permalink或操作系统的硬链接/符号链接功能。
+
+## 5. 目录结构优化与冲突策略
+
+### 5.1 层级目录架构
+
+#### 5.1.1 电影库结构：`Movies/Genre/Movie Name (Year)/Movie Name (Year) - Version.ext`
+
+电影库的标准结构为`Movies/Movie Name (Year)/Movie Name (Year).ext`。在此基础上，可以添加分类层级，如`Movies/Action/Movie Name (Year)/`或`Movies/Movies 2015-2024/Movie Name (Year)/`。对于大型库（超过1000部电影），建议增加一级字母分类以提升文件系统性能：
+```
+Movies/
+  A/
+    Avatar (2009)/
+  B/
+    Blade Runner (1982)/
+  ...
+  Z/
+    Zodiac (2007)/
+```
+这种结构避免了在`Movies`文件夹中列出数千个子文件夹，显著提升了文件浏览器的响应速度。Emby完全支持这种额外的层级，会自动识别字母文件夹内的电影。
+
+#### 5.1.2 剧集库结构：`TV Shows/Show Name (Year)/Season ##/Show Name S##E##.ext`
+
+剧集库的标准结构为`TV Shows/Show Name (Year)/Season ##/Show Name S##E##.ext`。`Season ##`文件夹是强制性的，且建议使用两位数（Season 01、Season 02）以保持排序正确。对于没有季概念的剧集（如迷你剧、纪录片系列），可以省略季文件夹，将所有集直接放在系列文件夹内，使用`Show Name - S01E01.ext`命名。但官方推荐始终使用季文件夹，即使只有一季。
+
+对于每日播出的节目（如新闻、脱口秀、肥皂剧），可以使用播出日期代替季集号，格式包括`anything_1996.11.14.ext`、`anything_1996-11-14.ext`或`anything_14.11.1996.ext`（取决于地区日期格式）。
+
+#### 5.1.3 动画专用结构：`Anime/Show Name/Season ##`或`Anime/Show Name/Absolute`双模式
+
+动画库可以采用双模式结构：
+- **标准模式**：遵循剧集库结构`Anime/Show Name (Year)/Season ##/`，适用于按季播出的动画。
+- **绝对模式**：使用`Anime/Show Name/Absolute/Show Name - ###.ext`，适用于长篇连续动画。
+
+这两种模式可以通过Emby的多个库（Libraries）实现：创建一个标准TV库和一个Anime库（使用Absolute Series Scanner）。同一物理文件可以通过符号链接（Symlink）或硬链接（Hardlink）出现在两个位置，分别采用不同命名，但这增加了维护复杂性。
+
+### 5.2 合集（Collection）自动识别与管理
+
+#### 5.2.1 TMDB合集数据集成：自动识别`Belongs to Collection`字段
+
+TMDB提供"Belongs to Collection"字段，用于标识影片所属的合集（如漫威电影宇宙、指环王三部曲、速度与激情系列）。Emby可以读取这些信息并自动创建动态合集（Collections），在首页显示"指环王合集"、"漫威电影宇宙"等条目。为了利用这一功能，需要确保Emby的元数据下载器（TMDB）已启用，并且电影文件名/文件夹名正确匹配TMDB条目。TMDB合集中的电影顺序基于TMDB的数据，通常按发行年份或剧情时间线排序。
+
+#### 5.2.2 物理文件夹合集：`Boxsets/Collection Name/Movie Name (Year).ext`手动组织
+
+除了自动合集，还可以创建物理文件夹合集，手动组织系列电影。结构为`Boxsets/Collection Name/Movie Name (Year)/Movie Name (Year).ext`。例如：
+```
+Boxsets/
+  The Lord of the Rings/
+    The Lord of the Rings The Fellowship of the Ring (2001)/
+    The Lord of the Rings The Two Towers (2002)/
+    The Lord of the Rings The Return of the King (2003)/
+```
+
+这种方案的优点是物理组织清晰，不依赖Emby的元数据；缺点是需要手动维护，且不会自动更新（如新增电影不会自动加入）。
+
+#### 5.2.3 动态合集生成：基于Emby智能播放列表或TMDB标签自动聚合
+
+Emby支持基于标签（Tags）、流派（Genres）、演员（Actors）等条件创建智能播放列表（Smart Playlists），这可以作为一种动态合集。例如，创建"克里斯托弗·诺兰电影"播放列表，自动包含所有导演为Christopher Nolan的影片。这种动态合集不需要特定的文件命名或文件夹结构，完全依赖元数据标签的准确性。
+
+### 5.3 冲突解决与结构重排
+
+#### 5.3.1 跨季内容处理：使用Emby Permalinks功能处理分散在多个文件夹的同一剧集
+
+当同一剧集因季数划分问题分散在多个文件夹时（如《心理测量者》Psycho-Pass，第1季叫"Psycho-Pass"，第2季叫"Psycho-Pass 2"，第3季叫"Psycho-Pass 3"），Emby可能将它们识别为不同系列。解决方案包括：
+1. 使用TMDB ID标签强制指定为同一系列
+2. 在Emby Web界面手动合并系列（Group Versions）
+3. 使用硬链接将文件同时存在于`Psycho-Pass`、`Psycho-Pass 2`等文件夹中，物理上保持多份引用
+
+#### 5.3.2 分割集（Split Episodes）处理：`S01E01-E02`或`S01E01.5`命名规范
+
+当一集内容跨越多个文件（如CD1/CD2、Part1/Part2），或一个文件包含多集内容时，需要特殊命名。对于多集文件（Multi-episode files），Emby支持以下格式：
+- `S01E01E02`（第1集和第2集）
+- `S01E01-E02`（第1集到第2集）
+- `S01E01-X03`（第1集到第3集）
+- `01x02x03`（第1季第2集和第3集）
+
+对于单集分割（如一集分为上下两部分），可以使用`S01E01.1`和`S01E01.2`或`S01E01 - Part 1`和`S01E01 - Part 2`，但Emby可能将其识别为不同版本而非连续播放的分段。最佳实践是使用视频编辑工具将分段合并为单文件，或使用Emby的章节标记功能。
+
+#### 5.3.3 自动重排策略：基于TMDB季集变更历史自动调整本地文件夹结构
+
+TMDB的季集划分可能随时间调整（如将原本的两季合并为一季，或拆分季度）。当TMDB数据更新后，本地文件结构可能需要相应调整。自动化工具如Sonarr可以监控TMDB变更并自动重命名文件、调整文件夹结构。对于手动管理的库，建议定期（如每季度）检查TMDB上的季集信息，使用FileBot等工具批量重命名。
+
+## 6. 元数据源集成与自动化流程
+
+### 6.1 TMDB深度集成方案
+
+#### 6.1.1 API调用优化：批量获取元数据，减少API请求频率
+
+TMDB API有请求频率限制（每秒最多40-50次请求）。对于大型媒体库（数千部影片），批量初始化时需要优化API调用策略。建议：
+1. 使用本地缓存存储已获取的元数据，避免重复请求
+2. 在Emby中配置"元数据存储方式"为本地NFO文件，减少后续扫描时的API调用
+3. 利用TMDB的批量端点（如`/movie/{movie_id}/credits`一次性获取演员和剧组信息）
+
+#### 6.1.2 多语言元数据拉取：同步获取`zh-CN`、`en-US`、`ja-JP`多语言标题与简介
+
+Emby支持为每个库配置"首选元数据下载语言"和"备用语言"。对于中文用户，建议设置主语言为Chinese Simplified（zh-CN），同时在元数据下载器设置中启用多语言支持。TMDB提供大多数影片的多语言标题和简介，Emby会优先下载配置语言的内容，如果缺失则回退到英语。对于动画内容，可能需要同时获取日语（ja-JP）原始标题和中文翻译，这可以通过自定义元数据插件或后期处理脚本实现。
+
+#### 6.1.3 合集元数据同步：自动更新TMDB合集中的影片归属关系
+
+TMDB的合集信息可能随时间更新（如新增影片到系列中）。Emby的"从元数据下载器导入合集信息"功能可以自动检测这些变更，但可能需要手动刷新媒体库才能看到更新。建议定期（如每月）执行"刷新元数据"操作，确保合集信息最新。
+
+### 6.2 辅助元数据源
+
+#### 6.2.1 AniDB集成（动画专用）：通过Shoko或Absolute Series Scanner弥补TMDB动漫数据不足
+
+TMDB对动画的覆盖，特别是OVA、SP和冷门动画，不如AniDB全面。Shoko Server（前身为Japanese Media Manager）是一个专门用于动画管理的元数据服务器，可以自动识别文件、匹配AniDB数据，然后生成与Emby兼容的NFO文件或直接向Emby提供元数据。它支持复杂的季集映射，如将AniDB的绝对集数映射到TMDB的季集结构。
+
+Absolute Series Scanner（ASS）是另一个针对动画优化的扫描器，支持AniDB ID标签（如`[anidb-12345]`）和自定义映射文件，处理TMDB与本地文件集数不一致的问题。
+
+#### 6.2.2 TVDB备用方案：处理TMDB缺失的剧集季集信息
+
+虽然TMDB是Emby的默认源，但某些剧集（特别是老剧或地区性剧集）可能在TMDB上数据不完整。TVDB（TheTVDB）可以作为备用源，特别是在处理剧集的季集划分和特别篇编号时。Emby允许配置多个元数据下载器，并设置优先级，当TMDB缺失数据时自动回退到TVDB。
+
+#### 6.2.3 本地NFO文件管理：生成与Emby兼容的`.nfo`文件实现离线元数据保留
+
+NFO文件是Emby的本地元数据格式，可以存储影片的详细信息、演员表、剧情简介等。生成NFO文件的好处包括：
+- 减少对外部API的依赖，提高扫描速度
+- 保留自定义元数据（如个人评分、观看备注）
+- 在离线环境下仍能显示完整的媒体信息
+
+tinyMediaManager等工具可以自动生成NFO文件，并下载相关的海报、背景图等artwork。
+
+### 6.3 自动化整理工作流
+
+#### 6.3.1 入库前处理：FileBot/tinyMediaManager自动重命名与元数据抓取
+
+FileBot是媒体文件重命名的行业标准工具，支持基于TMDB、AniDB等数据库的批量重命名。其命名脚本可以完全自定义，以匹配本架构的命名规范。tinyMediaManager则提供了更全面的媒体库管理功能，包括NFO生成、artwork下载、字幕搜索等。
+
+**推荐工作流程**：
+1. 下载完成后，FileBot监控下载文件夹
+2. 自动识别文件内容，查询TMDB/AniDB获取元数据
+3. 按照命名规范重命名文件并移动到目标库目录
+4. 生成NFO文件和下载artwork
+5. 触发Emby库扫描
+
+#### 6.3.2 实时监控机制：监听下载文件夹，自动触发整理脚本
+
+使用Sonarr（剧集）和Radarr（电影）作为下载管理器，它们可以：
+- 监控下载队列，自动发送下载请求给下载客户端（如qBittorrent、Transmission）
+- 下载完成后，自动重命名文件并移动到指定库目录
+- 根据质量配置，自动下载更高质量的版本并替换旧版本
+- 与Emby联动，通知其进行库刷新
+
+配置Sonarr/Radarr的命名格式，使其输出符合本架构的命名规范，是实现全自动化的关键。
+
+#### 6.3.3 质量升级处理：识别更高质量版本自动替换或并存管理
+
+质量升级策略包括：
+- **替换模式**：下载更高质量版本后，删除旧版本，保持库中只有最佳版本
+- **并存模式**：保留多个质量版本（如1080p和4K），使用Emby的多版本功能管理
+- **条件升级**：仅当质量提升超过阈值（如从WEB-DL升级到BluRay，或从1080p升级到4K）时才下载，忽略微小的质量差异（如不同发布组的相同质量版本）
+
+Radarr的质量配置文件（Quality Profile）允许精细定义升级路径和 cutoff（截止）质量，一旦达到指定质量，不再搜索更高版本。
+
+## 7. 实施工具链与技术方案
+
+### 7.1 命名与整理工具
+
+#### 7.1.1 FileBot集成：基于TMDB/AniDB的批量重命名脚本
+
+FileBot提供了对Emby、Jellyfin、Plex命名标准的原生支持，其`{emby}`绑定格式与`{plex}`类似，但在系列名称格式和ID标签格式上有细微差异。通过配置FileBot的格式表达式，可以实现一键重命名并自动创建符合Emby规范的目录结构。
+
+**示例FileBot格式表达式**：
+```
+Movies: {ny}/{ny} - {vf} {vc} {ac}{'-'+group}
+TV Shows: {ny}/Season {s}/{ny} - {s00e00} - {t} {vf} {vc}
+```
+
+#### 7.1.2 tinyMediaManager：Java/Swing跨平台管理，支持NFO生成与artwork下载
+
+tinyMediaManager（TMM）是一个基于Java的跨平台媒体管理工具，支持Windows、macOS和Linux。它提供了图形界面，便于手动编辑元数据和批量处理。TMM支持：
+- 从TMDB、TVDB、AniDB等多个源获取元数据
+- 自动生成Emby兼容的NFO文件
+- 下载海报、背景图、演员照片等artwork
+- 字幕搜索和下载集成
+
+#### 7.1.3 Sonarr/Radarr联动：下载管理器与Emby库自动同步命名规范
+
+Sonarr（剧集）和Radarr（电影）是*ARR系列自动化工具的核心。它们不仅管理下载，还负责文件整理和重命名。配置要点：
+- 设置命名格式与Emby规范一致
+- 配置根目录为Emby的库目录
+- 启用"Completed Download Handling"，自动处理下载完成的文件
+- 配置Connect（连接）通知Emby进行库刷新
+
+### 7.2 插件与扩展
+
+#### 7.2.1 Emby AniDB插件：提升动漫、OVA识别准确率
+
+Emby官方插件库中包含AniDB插件，可以增强对动画内容的识别。该插件通过AniDB的API获取元数据，特别适用于TMDB数据不完整的日本动画。配置时需要注意AniDB的API访问限制（需要注册账户，且免费账户有访问频率限制）。
+
+#### 7.2.2 Shoko Server集成：自动化动漫元数据管理与文件重命名
+
+Shoko Server是一个独立的元数据服务器，专门用于动画管理。它通过文件哈希（ED2K）识别文件，从AniDB获取精确的元数据，然后生成与Emby兼容的NFO文件。Shoko还支持自动重命名文件，确保命名符合规范。
+
+**Shoko工作流程**：
+1. 扫描本地文件，计算ED2K哈希
+2. 查询AniDB，匹配精确的剧集信息
+3. 获取元数据（标题、剧情、演员、关系图谱）
+4. 生成NFO文件并下载artwork
+5. 可选：自动重命名文件到指定格式
+
+#### 7.2.3 自定义扫描器（Scanner）：针对OVA/SP的Absolute Series Scanner配置
+
+Absolute Series Scanner（ASS）是一个第三方Emby扫描器，专门处理动画的绝对集数命名和特殊内容类型。配置ASS需要：
+- 下载ASS脚本并放置到Emby的插件目录
+- 在Emby库设置中选择ASS作为扫描器
+- 配置映射文件，处理TMDB与AniDB的季集差异
+
+### 7.3 质量验证与维护
+
+#### 7.3.1 命名合规性检查：正则表达式验证文件名是否符合TMDB匹配规则
+
+建立命名规范的正则表达式库，用于验证文件名是否符合标准。例如：
+- 电影：`^(.+?) \((\d{4})\).*\.(mkv|mp4|avi)$`
+- 剧集：`^(.+?) - S(\d{2})E(\d{2}) - .*\.(mkv|mp4|avi)$`
+
+可以使用脚本定期扫描库目录，检测不符合规范的命名，并生成报告。
+
+#### 7.3.2 元数据完整性监控：检测缺失元数据的文件并自动补全
+
+使用Emby的API或第三方工具（如TMM的批量编辑功能）定期检查库中的元数据完整性。检测指标包括：
+- 缺失海报或背景图的条目
+- 缺失剧情简介的条目
+- 演员信息不完整的条目
+- 季集信息与实际文件不匹配的条目
+
+#### 7.3.3 定期库维护：清理孤立文件、更新移动后的Permalink链接
+
+定期维护任务包括：
+- 清理已删除媒体的残留NFO文件和artwork
+- 更新因文件移动而断裂的Permalink链接
+- 检查并修复权限问题（确保Emby有读取权限）
+- 备份库数据库和NFO文件
+
+## 8. 异常处理与边界情况
+
+### 8.1 识别失败处理
+
+#### 8.1.1 手动匹配接口：Emby Web界面手动指定TMDB ID
+
+当自动识别失败时，Emby提供了手动匹配接口。在Web界面中，点击媒体条目上的"Identify"（识别）按钮，可以手动输入标题、年份和TMDB/TVDB ID进行强制匹配。对于难以识别的内容（如冷门OVA或特别篇），建议直接在文件夹名中嵌入ID标签（如`[tmdbid=xxxx]`），然后重新扫描库。
+
+#### 8.1.2 备用命名尝试：当`Title (Year)`失败时尝试`Title [Year]`或原始文件名
+
+某些情况下，Emby可能对特定的标点符号敏感。如果`Title (Year)`格式无法识别，可以尝试：
+- `Title [Year]`（方括号代替圆括号）
+- `Title - Year`（短横线分隔）
+- 移除所有特殊字符，仅保留字母和数字
+
+但应注意，这些备用格式可能不符合标准规范，仅作为临时调试手段。
+
+### 8.2 复杂场景适配
+
+#### 8.2.1 多季OVA处理：同一OVA系列跨多季归属的元数据映射
+
+某些OVA系列可能跨越多个TV季（如《魔法禁书目录》的OVA分散在不同季之间）。处理策略：
+- 如果TMDB将OVA归类到特定季的Specials中，遵循TMDB的划分
+- 如果OVA在TMDB中有独立条目，创建独立的电影或TV条目
+- 使用NFO文件中的`<showlink>`标签维护与主系列的关联
+
+#### 8.2.2 混合内容类型：音乐视频、纪录片、短片的特殊文件夹标记
+
+对于非标准的媒体类型（如音乐视频、纪录片、短片），建议使用Emby的"Mixed Content"（混合内容）库类型，或在标准库中使用特定的文件夹标记（如`Documentaries/`、`Music Videos/`）。这些内容的命名可能不遵循标准的电影/剧集格式，需要灵活处理。
+
+#### 8.2.3 云存储与远程挂载：确保命名规范在rclone/CloudDrive挂载下的兼容性
+
+当使用rclone、CloudDrive等工具将云存储挂载为本地磁盘时，需要注意：
+- 云存储可能对文件名长度和字符有限制（如Google Drive的255字符限制）
+- 某些文件系统（如FAT32）不支持某些字符
+- 网络延迟可能影响Emby的扫描性能
+
+建议在使用云存储时，保持命名简洁（避免过长标题），并预先在本地整理好命名后再上传到云端。使用硬链接或符号链接时，确保云存储挂载支持这些文件系统特性（某些云存储只支持普通文件，不支持链接）。
