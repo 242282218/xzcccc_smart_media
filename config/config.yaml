@@ -1,0 +1,39 @@
+alt_exts: []
+api_keys: null
+colored_log: true
+create_sub_directory: false
+database: quark_strm.db
+endpoints: []
+exts:
+- .mp4
+- .mkv
+log_file: logs/app.log
+log_level: INFO
+timeout: 30
+telegram:
+  enabled: ${TELEGRAM_ENABLED:-true}
+  bot_token: ${TELEGRAM_BOT_TOKEN}
+  chat_id: ${TELEGRAM_CHAT_ID}
+  proxy: ${TELEGRAM_PROXY}
+  events:
+  - task_completed
+  - task_failed
+tmdb:
+  api_key: ${TMDB_API_KEY}
+emby:
+  url: ${EMBY_URL}
+  api_key: ${EMBY_API_KEY}
+zhipu:
+  api_key: ${ZHIPU_API_KEY}
+quark:
+  cookie: ${QUARK_COOKIE}
+wechat:
+  enabled: false
+  provider: serverchan
+  send_key: ''
+webdav:
+  enabled: ${WEBDAV_ENABLED:-true}
+  mount_path: ${WEBDAV_MOUNT_PATH:-/dav}
+  username: ${WEBDAV_USERNAME}
+  password: ${WEBDAV_PASSWORD}
+  read_only: ${WEBDAV_READ_ONLY:-true}
