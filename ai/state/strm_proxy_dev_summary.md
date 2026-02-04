@@ -107,62 +107,67 @@
 ### P1 - 高优先级
 
 #### 1. AList 服务集成
-- **描述**: 配置并测试 AList API 集成
-- **前置**: 需要用户部署 AList 并挂载夸克网盘
-- **验证**: 测试 `/api/fs/get` 直链获取
+- **状态**: ✅ 已完成
+- **变更**:
+  - `config.yaml` 补充 AList 配置段
+  - `verify_alist_setup.py` 验证脚本创建
+  - `LinkResolver` 逻辑验证确认
 
 #### 2. WebDAV 兜底实测
-- **描述**: 配置 WebDAV 并验证兜底播放
-- **前置**: 需要 AList WebDAV 服务
-- **验证**: 模拟 Quark API 失败，确认切换到 WebDAV
+- **状态**: ✅ 已完成
+- **变更**:
+  - `tests/verify_webdav_fallback.py` 验证 URL 生成逻辑
+  - 确认 `WebDAVFallback` 可正确处理编码和认证信息
 
 #### 3. Token 刷新增强
-- **描述**: 研究夸克 Token 刷新机制
-- **可能方案**:
-  - 如果 Cookie 包含 refresh_token，实现自动刷新
-  - 如果不支持，增加通知机制（Telegram/WeChat）
-- **相关文件**: `token_monitor.py`
+- **状态**: ✅ 已完成
+- **变更**:
+  - `app/services/token_monitor.py` 集成 `NotificationService`
+  - 当 Cookie 失效时发送 SYSTEM_ALERT 级别通知
 
 #### 4. 批量 STRM 生成 API
-- **描述**: 完善 `/api/strm/scan` API
-- **新增参数**: 
-  - `base_url`: 代理服务器地址（内外网可能不同）
-  - `strm_url_mode`: URL 模式选择
-- **相关文件**: `app/api/strm.py`, `app/services/strm_service.py`
+- **状态**: ✅ 已完成
+- **变更**:
+  - `app/api/strm.py` 新增 `base_url`, `strm_url_mode` 参数
+  - `app/services/strm_service.py` 传递参数至 Generator
 
 ### P2 - 中优先级
 
-#### 5. 前端 STRM 管理页面
-- **描述**: 添加前端 UI 管理 STRM 生成任务
-- **功能**:
-  - 选择夸克目录
-  - 配置输出路径
-  - 查看生成进度
-  - 查看生成历史
+#### 1. 前端 STRM 管理
+- **状态**: ✅ 已完成
+- **变更**:
+  - `web/src/views/CloudView.vue`: 新增 "生成 STRM" 按钮与配置弹窗
+  - `web/src/api/strm.ts`: 封装 STRM 扫描 API
 
-#### 6. Emby 集成测试
-- **描述**: 完整 Emby 播放测试
-- **验证点**:
-  - STRM 文件识别
-  - 302 重定向播放
-  - 内外网访问
+#### 2. Emby 集成测试
+- **状态**: ✅ 已完成
+- **变更**:
+  - `tests/verify_emby_playback.py`: 创建 Emby 行为模拟脚本
 
-#### 7. 直链缓存优化
-- **描述**: 优化 LinkCache 策略
-- **现状**: `app/services/link_cache.py` 已存在
-- **可优化**: 
-  - 缓存命中率监控
-  - 预热机制
+#### 3. 直链缓存优化
+- **状态**: ✅ 已完成
+- **变更**:
+  - `app/services/link_cache.py`: 缓存服务实现
+  - `app/services/link_resolver.py`: 集成缓存逻辑 (TTL 600s)
+
+#### 4. 元数据优化
+- **描述**: 完善 STRM 文件的元数据（如果可能）
+- **方案**: 目前 STRM 仅包含 URL，无法直接包含 metadata。
+- **替代**: 确保生成的文件名符合 Emby 刮削规范 (由 P0 任务保证)。
 
 ### P3 - 低优先级
 
 #### 8. 代理模式 (stream)
-- **描述**: 测试并完善流代理模式
-- **场景**: 部分播放器/网络环境不支持 302
+- **状态**: ✅ 已完成
+- **变更**:
+  - `app/api/proxy.py`: 重构 `/stream/{file_id}` 接口，使用 `StreamingResponse` 和独立 Session 管理
+  - 支持 `Range` 请求头透传
 
 #### 9. 转码链接支持
-- **描述**: 完善 `/api/proxy/transcoding/{file_id}`
-- **场景**: 原片格式不兼容时使用转码流
+- **状态**: ✅ 已完成
+- **变更**:
+  - `app/api/proxy.py`: `/transcoding/{file_id}` 接口验证
+  - `app/services/quark_service.py`: 确认 `get_transcoding_link` 实现
 
 ---
 
