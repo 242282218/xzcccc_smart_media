@@ -39,6 +39,8 @@ build/
 .env
 .env.local
 config.yaml
+emby_test_report.md
+*_test_report.md
 
 # Trae specific
 .trae/
