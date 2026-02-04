@@ -38,6 +38,7 @@ build/
 # Environment variables
 .env
 .env.local
+config.yaml
 
 # Trae specific
 .trae/
