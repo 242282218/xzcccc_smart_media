@@ -1,0 +1,23 @@
+version: 1
+
+default_suite: fast
+
+logs_dir: logs/test
+history_file: logs/test/summary.json
+require_container: true
+
+suites:
+  fast:
+    command:
+      - python
+      - -m
+      - pytest
+      - -q
+      - quark_strm/tests
+      - --junitxml
+      - logs/test/junit.xml
+    working_dir: .
+    timeout_mode: D2
+    timeout_min_sec: 20
+    timeout_max_sec: 60
+

@@ -43,7 +43,13 @@ emby_test_report.md
 *_test_report.md
 
 # Trae specific
+# Keep rules/skills in repo, ignore everything else under .trae/
 .trae/
+!.trae/
+!.trae/rules/
+!.trae/rules/**
+!.trae/skills/
+!.trae/skills/**
 
 # Pansou reference (separate repo)
 pansou-reference/

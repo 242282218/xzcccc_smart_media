@@ -70,6 +70,11 @@
 禁止：编写大量重复性内容消耗token
 ```
 
+### 5. 测试执行规则
+- 测试仅允许使用 `scripts/run_tests.py`（读取 `ai/test_config.yaml`）
+- 禁止直接运行 pytest/npm test 或进入交互式 shell
+- 日志输出固定在 `logs/test/`，仅用于只读分析与修复
+
 ---
 
 ## 🤖 Agent 角色定义
