@@ -1,5 +1,8 @@
 {
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.3"
+  },
+  "devDependencies": {
+    "playwright": "^1.58.1"
   }
 }

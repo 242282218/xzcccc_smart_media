@@ -14,15 +14,25 @@ description: 统一使用 scripts/run_tests.py 执行测试，输出 logs/test�
 
 1. 确认配置存在：
    - `ai/test_config.yaml`
-2. 运行测试入口：
+2. 启动本地 Docker Compose 容器：
    ```powershell
-   python scripts/run_tests.py --suite fast
+   docker compose -f docker-compose.test.yml up -d
+   docker compose -f docker-compose.test.yml exec -T test-runner python scripts/run_tests.py --suite fast
    ```
-3. 查看日志：
+3. 或使用封装脚本：
+   ```powershell
+   python scripts/run_tests_compose.py --suite fast
+   ```
+4. 查看日志：
    - `logs/test/summary.json`
    - `logs/test/stdout.log`
    - `logs/test/stderr.log`
    - `logs/test/junit.xml`
+
+## 可选套件
+
+- `rules`: 运行 `scripts/ai_rules_manager.py check`
+- `entry`: 运行 `python -m py_compile scripts/run_tests.py`
 
 ## 禁止事项
 

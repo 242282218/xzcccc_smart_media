@@ -1,0 +1,6 @@
+# Antigrity (unofficial)
+# If your Antigrity setup reads .cursorrules, you can keep this minimal and defer to SSOT.
+Please read and follow:
+- ai/rules/agent.md
+- ai/runner.md
+- ai/state/plan.md
