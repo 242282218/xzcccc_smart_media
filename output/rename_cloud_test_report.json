@@ -1,0 +1,1421 @@
+{
+  "context": {
+    "root_fid": "0",
+    "test_dir_fid": "bdd40843d6aa4243b6fd803d75dd6f6a",
+    "test_dir_name": "收藏TV",
+    "test_dir_created": false,
+    "special_char_targets": 5,
+    "timeout_sec": 3
+  },
+  "summary": {
+    "started_at": "2026-02-05T19:34:31.430940Z",
+    "finished_at": "2026-02-05T19:34:49.757132Z",
+    "total_items": 30,
+    "total_files": 12,
+    "total_dirs": 18,
+    "rename_attempts": 30,
+    "rename_successes": 30,
+    "rename_failures": 0,
+    "timeouts": 0,
+    "skipped": 0
+  },
+  "results": [
+    {
+      "item_type": "file",
+      "fid": "7ae40c28b5ed45fea3ea51ff9412db14",
+      "parent_fid": "bdd40843d6aa4243b6fd803d75dd6f6a",
+      "original_name": "千与千寻.2001.BluRay.1080P.H265.10bit.国粤日英四语.中日特效字幕.sup",
+      "temp_name": "千与千寻.2001.BluRay.1080P.H265.10bit.国粤日英四语.中日特效字幕 test-[]()___renametest_193431.sup",
+      "stage": "file-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "7ae40c28b5ed45fea3ea51ff9412db14",
+      "parent_fid": "bdd40843d6aa4243b6fd803d75dd6f6a",
+      "original_name": "千与千寻.2001.BluRay.1080P.H265.10bit.国粤日英四语.中日特效字幕.sup",
+      "temp_name": "千与千寻.2001.BluRay.1080P.H265.10bit.国粤日英四语.中日特效字幕 test-[]()___renametest_193431.sup",
+      "stage": "file-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "千与千寻.2001.BluRay.1080P.H265.10bit.国粤日英四语.中日特效字幕 test-[]()___renametest_193431.sup",
+        "updated_size": 65847583,
+        "updated_parent": "bdd40843d6aa4243b6fd803d75dd6f6a"
+      }
+    },
+    {
+      "item_type": "file",
+      "fid": "7ae40c28b5ed45fea3ea51ff9412db14",
+      "parent_fid": "bdd40843d6aa4243b6fd803d75dd6f6a",
+      "original_name": "千与千寻.2001.BluRay.1080P.H265.10bit.国粤日英四语.中日特效字幕.sup",
+      "temp_name": "千与千寻.2001.BluRay.1080P.H265.10bit.国粤日英四语.中日特效字幕 test-[]()___renametest_193431.sup",
+      "stage": "file-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "6e4f43091b1e451b8c22ce612e36194e",
+      "parent_fid": "4422b898ab3d4d06bc845a9e08301b0e",
+      "original_name": "기생충.2019.2160p.BluRay.Remux.HEVC.Dolby Vision.Dolby TrueHD.7.1. Atmos -WuKe.mkv",
+      "temp_name": "기생충.2019.2160p.BluRay.Remux.HEVC.Dolby Vision.Dolby TrueHD.7.1. Atmos -WuKe__renametest_193431.mkv",
+      "stage": "file-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "6e4f43091b1e451b8c22ce612e36194e",
+      "parent_fid": "4422b898ab3d4d06bc845a9e08301b0e",
+      "original_name": "기생충.2019.2160p.BluRay.Remux.HEVC.Dolby Vision.Dolby TrueHD.7.1. Atmos -WuKe.mkv",
+      "temp_name": "기생충.2019.2160p.BluRay.Remux.HEVC.Dolby Vision.Dolby TrueHD.7.1. Atmos -WuKe__renametest_193431.mkv",
+      "stage": "file-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "기생충.2019.2160p.BluRay.Remux.HEVC.Dolby Vision.Dolby TrueHD.7.1. Atmos -WuKe__renametest_193431.mkv",
+        "updated_size": 93417895991,
+        "updated_parent": "4422b898ab3d4d06bc845a9e08301b0e"
+      }
+    },
+    {
+      "item_type": "file",
+      "fid": "6e4f43091b1e451b8c22ce612e36194e",
+      "parent_fid": "4422b898ab3d4d06bc845a9e08301b0e",
+      "original_name": "기생충.2019.2160p.BluRay.Remux.HEVC.Dolby Vision.Dolby TrueHD.7.1. Atmos -WuKe.mkv",
+      "temp_name": "기생충.2019.2160p.BluRay.Remux.HEVC.Dolby Vision.Dolby TrueHD.7.1. Atmos -WuKe__renametest_193431.mkv",
+      "stage": "file-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "abd9ac5433a94c249c06c2a36d3fd87b",
+      "parent_fid": "33bf1de9fb2a461491bc60f2693142b0",
+      "original_name": "Spirited.Away.2001.BDREMUX.AI.UPSCALE.3840x2160.alq-8.SDR.Final.mkv",
+      "temp_name": "Spirited.Away.2001.BDREMUX.AI.UPSCALE.3840x2160.alq-8.SDR.Final__renametest_193431.mkv",
+      "stage": "file-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "abd9ac5433a94c249c06c2a36d3fd87b",
+      "parent_fid": "33bf1de9fb2a461491bc60f2693142b0",
+      "original_name": "Spirited.Away.2001.BDREMUX.AI.UPSCALE.3840x2160.alq-8.SDR.Final.mkv",
+      "temp_name": "Spirited.Away.2001.BDREMUX.AI.UPSCALE.3840x2160.alq-8.SDR.Final__renametest_193431.mkv",
+      "stage": "file-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "Spirited.Away.2001.BDREMUX.AI.UPSCALE.3840x2160.alq-8.SDR.Final__renametest_193431.mkv",
+        "updated_size": 111848489424,
+        "updated_parent": "33bf1de9fb2a461491bc60f2693142b0"
+      }
+    },
+    {
+      "item_type": "file",
+      "fid": "abd9ac5433a94c249c06c2a36d3fd87b",
+      "parent_fid": "33bf1de9fb2a461491bc60f2693142b0",
+      "original_name": "Spirited.Away.2001.BDREMUX.AI.UPSCALE.3840x2160.alq-8.SDR.Final.mkv",
+      "temp_name": "Spirited.Away.2001.BDREMUX.AI.UPSCALE.3840x2160.alq-8.SDR.Final__renametest_193431.mkv",
+      "stage": "file-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "83322139e3684115a407a8ebdc7bddf8",
+      "parent_fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "original_name": "Komi-san wa Komyushou Desu. [Fonts].zip",
+      "temp_name": "Komi-san wa Komyushou Desu. [Fonts]__renametest_193431.zip",
+      "stage": "file-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "83322139e3684115a407a8ebdc7bddf8",
+      "parent_fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "original_name": "Komi-san wa Komyushou Desu. [Fonts].zip",
+      "temp_name": "Komi-san wa Komyushou Desu. [Fonts]__renametest_193431.zip",
+      "stage": "file-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "Komi-san wa Komyushou Desu. [Fonts]__renametest_193431.zip",
+        "updated_size": 304029883,
+        "updated_parent": "ffe0b5cab24d4bf686b7bee19845ca94"
+      }
+    },
+    {
+      "item_type": "file",
+      "fid": "83322139e3684115a407a8ebdc7bddf8",
+      "parent_fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "original_name": "Komi-san wa Komyushou Desu. [Fonts].zip",
+      "temp_name": "Komi-san wa Komyushou Desu. [Fonts]__renametest_193431.zip",
+      "stage": "file-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "14031b0ebad048a39aba8e5f61a4de05",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[12].nfo",
+      "temp_name": "[12]__renametest_193431.nfo",
+      "stage": "file-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "14031b0ebad048a39aba8e5f61a4de05",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[12].nfo",
+      "temp_name": "[12]__renametest_193431.nfo",
+      "stage": "file-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "[12]__renametest_193431.nfo",
+        "updated_size": 11783,
+        "updated_parent": "b2b648097fcb4eec897fd7eb3b063591"
+      }
+    },
+    {
+      "item_type": "file",
+      "fid": "14031b0ebad048a39aba8e5f61a4de05",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[12].nfo",
+      "temp_name": "[12]__renametest_193431.nfo",
+      "stage": "file-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "ef626fb89d0741f8919dd4822c9a3021",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[11].nfo",
+      "temp_name": "[11]__renametest_193431.nfo",
+      "stage": "file-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "ef626fb89d0741f8919dd4822c9a3021",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[11].nfo",
+      "temp_name": "[11]__renametest_193431.nfo",
+      "stage": "file-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "[11]__renametest_193431.nfo",
+        "updated_size": 8018,
+        "updated_parent": "b2b648097fcb4eec897fd7eb3b063591"
+      }
+    },
+    {
+      "item_type": "file",
+      "fid": "ef626fb89d0741f8919dd4822c9a3021",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[11].nfo",
+      "temp_name": "[11]__renametest_193431.nfo",
+      "stage": "file-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "d8fceb91807c4d9283a8703d274113e2",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[10].nfo",
+      "temp_name": "[10]__renametest_193431.nfo",
+      "stage": "file-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "d8fceb91807c4d9283a8703d274113e2",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[10].nfo",
+      "temp_name": "[10]__renametest_193431.nfo",
+      "stage": "file-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "[10]__renametest_193431.nfo",
+        "updated_size": 4952,
+        "updated_parent": "b2b648097fcb4eec897fd7eb3b063591"
+      }
+    },
+    {
+      "item_type": "file",
+      "fid": "d8fceb91807c4d9283a8703d274113e2",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[10].nfo",
+      "temp_name": "[10]__renametest_193431.nfo",
+      "stage": "file-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "6ebf663b11ef47fea7dad4b1e7bce944",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[09].nfo",
+      "temp_name": "[09]__renametest_193431.nfo",
+      "stage": "file-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "6ebf663b11ef47fea7dad4b1e7bce944",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[09].nfo",
+      "temp_name": "[09]__renametest_193431.nfo",
+      "stage": "file-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "[09]__renametest_193431.nfo",
+        "updated_size": 2619,
+        "updated_parent": "b2b648097fcb4eec897fd7eb3b063591"
+      }
+    },
+    {
+      "item_type": "file",
+      "fid": "6ebf663b11ef47fea7dad4b1e7bce944",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[09].nfo",
+      "temp_name": "[09]__renametest_193431.nfo",
+      "stage": "file-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "a432f6a442b94cf8b6040d018c94999d",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[08].nfo",
+      "temp_name": "[08]__renametest_193431.nfo",
+      "stage": "file-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "a432f6a442b94cf8b6040d018c94999d",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[08].nfo",
+      "temp_name": "[08]__renametest_193431.nfo",
+      "stage": "file-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "[08]__renametest_193431.nfo",
+        "updated_size": 5838,
+        "updated_parent": "b2b648097fcb4eec897fd7eb3b063591"
+      }
+    },
+    {
+      "item_type": "file",
+      "fid": "a432f6a442b94cf8b6040d018c94999d",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[08].nfo",
+      "temp_name": "[08]__renametest_193431.nfo",
+      "stage": "file-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "43105791457543bcbca71b60011fe821",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[07].nfo",
+      "temp_name": "[07]__renametest_193431.nfo",
+      "stage": "file-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "43105791457543bcbca71b60011fe821",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[07].nfo",
+      "temp_name": "[07]__renametest_193431.nfo",
+      "stage": "file-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "[07]__renametest_193431.nfo",
+        "updated_size": 3911,
+        "updated_parent": "b2b648097fcb4eec897fd7eb3b063591"
+      }
+    },
+    {
+      "item_type": "file",
+      "fid": "43105791457543bcbca71b60011fe821",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[07].nfo",
+      "temp_name": "[07]__renametest_193431.nfo",
+      "stage": "file-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "249b694d4e584c4cbbed95037758679d",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[06].nfo",
+      "temp_name": "[06]__renametest_193431.nfo",
+      "stage": "file-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "249b694d4e584c4cbbed95037758679d",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[06].nfo",
+      "temp_name": "[06]__renametest_193431.nfo",
+      "stage": "file-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "[06]__renametest_193431.nfo",
+        "updated_size": 2184,
+        "updated_parent": "b2b648097fcb4eec897fd7eb3b063591"
+      }
+    },
+    {
+      "item_type": "file",
+      "fid": "249b694d4e584c4cbbed95037758679d",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[06].nfo",
+      "temp_name": "[06]__renametest_193431.nfo",
+      "stage": "file-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "b7c1c10c7d8140da9e386ba045ef8fd4",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[05].nfo",
+      "temp_name": "[05]__renametest_193431.nfo",
+      "stage": "file-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "b7c1c10c7d8140da9e386ba045ef8fd4",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[05].nfo",
+      "temp_name": "[05]__renametest_193431.nfo",
+      "stage": "file-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "[05]__renametest_193431.nfo",
+        "updated_size": 4598,
+        "updated_parent": "b2b648097fcb4eec897fd7eb3b063591"
+      }
+    },
+    {
+      "item_type": "file",
+      "fid": "b7c1c10c7d8140da9e386ba045ef8fd4",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "[05].nfo",
+      "temp_name": "[05]__renametest_193431.nfo",
+      "stage": "file-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "7a36907b00db4fcb92c6583e15f2217e",
+      "parent_fid": "bdd40843d6aa4243b6fd803d75dd6f6a",
+      "original_name": "Movies",
+      "temp_name": "Movies test-[]()___renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "7a36907b00db4fcb92c6583e15f2217e",
+      "parent_fid": "bdd40843d6aa4243b6fd803d75dd6f6a",
+      "original_name": "Movies",
+      "temp_name": "Movies test-[]()___renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "Movies test-[]()___renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "bdd40843d6aa4243b6fd803d75dd6f6a"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "7a36907b00db4fcb92c6583e15f2217e",
+      "parent_fid": "bdd40843d6aa4243b6fd803d75dd6f6a",
+      "original_name": "Movies",
+      "temp_name": "Movies test-[]()___renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "40fb05e9db30458a96f5f865eb91eebb",
+      "parent_fid": "bdd40843d6aa4243b6fd803d75dd6f6a",
+      "original_name": "TV Shows",
+      "temp_name": "TV Shows test-[]()___renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "40fb05e9db30458a96f5f865eb91eebb",
+      "parent_fid": "bdd40843d6aa4243b6fd803d75dd6f6a",
+      "original_name": "TV Shows",
+      "temp_name": "TV Shows test-[]()___renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "TV Shows test-[]()___renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "bdd40843d6aa4243b6fd803d75dd6f6a"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "40fb05e9db30458a96f5f865eb91eebb",
+      "parent_fid": "bdd40843d6aa4243b6fd803d75dd6f6a",
+      "original_name": "TV Shows",
+      "temp_name": "TV Shows test-[]()___renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "75113af26f8f48bf930022b8fd7d37f7",
+      "parent_fid": "7a36907b00db4fcb92c6583e15f2217e",
+      "original_name": "【高分电影】寄生虫 (2019)【4K蓝光原盘REMUX】【杜比视界&杜比全景声国韩双语】内封简繁特效字幕",
+      "temp_name": "【高分电影】寄生虫 (2019)【4K蓝光原盘REMUX】【杜比视界&杜比全景声国韩双语】内封简繁特效字幕 test-[]()___renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "75113af26f8f48bf930022b8fd7d37f7",
+      "parent_fid": "7a36907b00db4fcb92c6583e15f2217e",
+      "original_name": "【高分电影】寄生虫 (2019)【4K蓝光原盘REMUX】【杜比视界&杜比全景声国韩双语】内封简繁特效字幕",
+      "temp_name": "【高分电影】寄生虫 (2019)【4K蓝光原盘REMUX】【杜比视界&杜比全景声国韩双语】内封简繁特效字幕 test-[]()___renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "【高分电影】寄生虫 (2019)【4K蓝光原盘REMUX】【杜比视界&杜比全景声国韩双语】内封简繁特效字幕 test-[]()___renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "7a36907b00db4fcb92c6583e15f2217e"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "75113af26f8f48bf930022b8fd7d37f7",
+      "parent_fid": "7a36907b00db4fcb92c6583e15f2217e",
+      "original_name": "【高分电影】寄生虫 (2019)【4K蓝光原盘REMUX】【杜比视界&杜比全景声国韩双语】内封简繁特效字幕",
+      "temp_name": "【高分电影】寄生虫 (2019)【4K蓝光原盘REMUX】【杜比视界&杜比全景声国韩双语】内封简繁特效字幕 test-[]()___renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "544100f0012d4e96bb8f5288e0c1aa73",
+      "parent_fid": "7a36907b00db4fcb92c6583e15f2217e",
+      "original_name": "千与千寻 (2001) 4K REMUX 国粤日英音轨 外挂简日特效字幕 104.2G",
+      "temp_name": "千与千寻 (2001) 4K REMUX 国粤日英音轨 外挂简日特效字幕 104 test-[]()___renametest_193431.2G",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "544100f0012d4e96bb8f5288e0c1aa73",
+      "parent_fid": "7a36907b00db4fcb92c6583e15f2217e",
+      "original_name": "千与千寻 (2001) 4K REMUX 国粤日英音轨 外挂简日特效字幕 104.2G",
+      "temp_name": "千与千寻 (2001) 4K REMUX 国粤日英音轨 外挂简日特效字幕 104 test-[]()___renametest_193431.2G",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "千与千寻 (2001) 4K REMUX 国粤日英音轨 外挂简日特效字幕 104 test-[]()___renametest_193431.2G",
+        "updated_size": 0,
+        "updated_parent": "7a36907b00db4fcb92c6583e15f2217e"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "544100f0012d4e96bb8f5288e0c1aa73",
+      "parent_fid": "7a36907b00db4fcb92c6583e15f2217e",
+      "original_name": "千与千寻 (2001) 4K REMUX 国粤日英音轨 外挂简日特效字幕 104.2G",
+      "temp_name": "千与千寻 (2001) 4K REMUX 国粤日英音轨 外挂简日特效字幕 104 test-[]()___renametest_193431.2G",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "79af259835b840db8622f7889ccf31fc",
+      "parent_fid": "40fb05e9db30458a96f5f865eb91eebb",
+      "original_name": "【古见同学有交流障碍症】S01-S024K超清内附中文字幕【35G】",
+      "temp_name": "【古见同学有交流障碍症】S01-S024K超清内附中文字幕【35G】__renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "79af259835b840db8622f7889ccf31fc",
+      "parent_fid": "40fb05e9db30458a96f5f865eb91eebb",
+      "original_name": "【古见同学有交流障碍症】S01-S024K超清内附中文字幕【35G】",
+      "temp_name": "【古见同学有交流障碍症】S01-S024K超清内附中文字幕【35G】__renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "【古见同学有交流障碍症】S01-S024K超清内附中文字幕【35G】__renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "40fb05e9db30458a96f5f865eb91eebb"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "79af259835b840db8622f7889ccf31fc",
+      "parent_fid": "40fb05e9db30458a96f5f865eb91eebb",
+      "original_name": "【古见同学有交流障碍症】S01-S024K超清内附中文字幕【35G】",
+      "temp_name": "【古见同学有交流障碍症】S01-S024K超清内附中文字幕【35G】__renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "8b13db6506584a7884416297e05c6e81",
+      "parent_fid": "40fb05e9db30458a96f5f865eb91eebb",
+      "original_name": "《擅长捉弄的高木同学》全三季合集 【4K超清2160P收藏版】 内封中文字幕 附剧场版+OV",
+      "temp_name": "《擅长捉弄的高木同学》全三季合集 【4K超清2160P收藏版】 内封中文字幕 附剧场版+OV__renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "8b13db6506584a7884416297e05c6e81",
+      "parent_fid": "40fb05e9db30458a96f5f865eb91eebb",
+      "original_name": "《擅长捉弄的高木同学》全三季合集 【4K超清2160P收藏版】 内封中文字幕 附剧场版+OV",
+      "temp_name": "《擅长捉弄的高木同学》全三季合集 【4K超清2160P收藏版】 内封中文字幕 附剧场版+OV__renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "《擅长捉弄的高木同学》全三季合集 【4K超清2160P收藏版】 内封中文字幕 附剧场版+OV__renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "40fb05e9db30458a96f5f865eb91eebb"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "8b13db6506584a7884416297e05c6e81",
+      "parent_fid": "40fb05e9db30458a96f5f865eb91eebb",
+      "original_name": "《擅长捉弄的高木同学》全三季合集 【4K超清2160P收藏版】 内封中文字幕 附剧场版+OV",
+      "temp_name": "《擅长捉弄的高木同学》全三季合集 【4K超清2160P收藏版】 内封中文字幕 附剧场版+OV__renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "4422b898ab3d4d06bc845a9e08301b0e",
+      "parent_fid": "75113af26f8f48bf930022b8fd7d37f7",
+      "original_name": "寄生虫 (2019)【4K蓝光原盘REMUX】【杜比视界&杜比全景声国韩双语】内封简繁特效字幕[87G]",
+      "temp_name": "寄生虫 (2019)【4K蓝光原盘REMUX】【杜比视界&杜比全景声国韩双语】内封简繁特效字幕[87G]__renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "4422b898ab3d4d06bc845a9e08301b0e",
+      "parent_fid": "75113af26f8f48bf930022b8fd7d37f7",
+      "original_name": "寄生虫 (2019)【4K蓝光原盘REMUX】【杜比视界&杜比全景声国韩双语】内封简繁特效字幕[87G]",
+      "temp_name": "寄生虫 (2019)【4K蓝光原盘REMUX】【杜比视界&杜比全景声国韩双语】内封简繁特效字幕[87G]__renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "寄生虫 (2019)【4K蓝光原盘REMUX】【杜比视界&杜比全景声国韩双语】内封简繁特效字幕[87G]__renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "75113af26f8f48bf930022b8fd7d37f7"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "4422b898ab3d4d06bc845a9e08301b0e",
+      "parent_fid": "75113af26f8f48bf930022b8fd7d37f7",
+      "original_name": "寄生虫 (2019)【4K蓝光原盘REMUX】【杜比视界&杜比全景声国韩双语】内封简繁特效字幕[87G]",
+      "temp_name": "寄生虫 (2019)【4K蓝光原盘REMUX】【杜比视界&杜比全景声国韩双语】内封简繁特效字幕[87G]__renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "33bf1de9fb2a461491bc60f2693142b0",
+      "parent_fid": "544100f0012d4e96bb8f5288e0c1aa73",
+      "original_name": "千与千寻 (2001) 4K REMUX 国粤日英音轨 外挂简日特效字幕",
+      "temp_name": "千与千寻 (2001) 4K REMUX 国粤日英音轨 外挂简日特效字幕__renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "33bf1de9fb2a461491bc60f2693142b0",
+      "parent_fid": "544100f0012d4e96bb8f5288e0c1aa73",
+      "original_name": "千与千寻 (2001) 4K REMUX 国粤日英音轨 外挂简日特效字幕",
+      "temp_name": "千与千寻 (2001) 4K REMUX 国粤日英音轨 外挂简日特效字幕__renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "千与千寻 (2001) 4K REMUX 国粤日英音轨 外挂简日特效字幕__renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "544100f0012d4e96bb8f5288e0c1aa73"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "33bf1de9fb2a461491bc60f2693142b0",
+      "parent_fid": "544100f0012d4e96bb8f5288e0c1aa73",
+      "original_name": "千与千寻 (2001) 4K REMUX 国粤日英音轨 外挂简日特效字幕",
+      "temp_name": "千与千寻 (2001) 4K REMUX 国粤日英音轨 外挂简日特效字幕__renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "parent_fid": "79af259835b840db8622f7889ccf31fc",
+      "original_name": "ID：12804_古见同学有交流障碍症4K",
+      "temp_name": "ID：12804_古见同学有交流障碍症4K__renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "parent_fid": "79af259835b840db8622f7889ccf31fc",
+      "original_name": "ID：12804_古见同学有交流障碍症4K",
+      "temp_name": "ID：12804_古见同学有交流障碍症4K__renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "ID：12804_古见同学有交流障碍症4K__renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "79af259835b840db8622f7889ccf31fc"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "parent_fid": "79af259835b840db8622f7889ccf31fc",
+      "original_name": "ID：12804_古见同学有交流障碍症4K",
+      "temp_name": "ID：12804_古见同学有交流障碍症4K__renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "05af64f3da5640b4b07325217089defb",
+      "parent_fid": "8b13db6506584a7884416297e05c6e81",
+      "original_name": "擅长捉弄的高木同学全三季合集 4K超清2160P收藏版 内封中文字幕 附剧场版+OVA",
+      "temp_name": "擅长捉弄的高木同学全三季合集 4K超清2160P收藏版 内封中文字幕 附剧场版+OVA__renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "05af64f3da5640b4b07325217089defb",
+      "parent_fid": "8b13db6506584a7884416297e05c6e81",
+      "original_name": "擅长捉弄的高木同学全三季合集 4K超清2160P收藏版 内封中文字幕 附剧场版+OVA",
+      "temp_name": "擅长捉弄的高木同学全三季合集 4K超清2160P收藏版 内封中文字幕 附剧场版+OVA__renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "擅长捉弄的高木同学全三季合集 4K超清2160P收藏版 内封中文字幕 附剧场版+OVA__renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "8b13db6506584a7884416297e05c6e81"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "05af64f3da5640b4b07325217089defb",
+      "parent_fid": "8b13db6506584a7884416297e05c6e81",
+      "original_name": "擅长捉弄的高木同学全三季合集 4K超清2160P收藏版 内封中文字幕 附剧场版+OVA",
+      "temp_name": "擅长捉弄的高木同学全三季合集 4K超清2160P收藏版 内封中文字幕 附剧场版+OVA__renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "parent_fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "original_name": "古见同学有交流障碍症 第一季",
+      "temp_name": "古见同学有交流障碍症 第一季__renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "parent_fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "original_name": "古见同学有交流障碍症 第一季",
+      "temp_name": "古见同学有交流障碍症 第一季__renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "古见同学有交流障碍症 第一季__renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "ffe0b5cab24d4bf686b7bee19845ca94"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "parent_fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "original_name": "古见同学有交流障碍症 第一季",
+      "temp_name": "古见同学有交流障碍症 第一季__renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "ed59159a942741ef911859c505090bdb",
+      "parent_fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "original_name": "古见同学有交流障碍症 第二季",
+      "temp_name": "古见同学有交流障碍症 第二季__renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "ed59159a942741ef911859c505090bdb",
+      "parent_fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "original_name": "古见同学有交流障碍症 第二季",
+      "temp_name": "古见同学有交流障碍症 第二季__renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "古见同学有交流障碍症 第二季__renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "ffe0b5cab24d4bf686b7bee19845ca94"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "ed59159a942741ef911859c505090bdb",
+      "parent_fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "original_name": "古见同学有交流障碍症 第二季",
+      "temp_name": "古见同学有交流障碍症 第二季__renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "42fe041420ce40d8b653c41fc1322358",
+      "parent_fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "original_name": "字幕备份",
+      "temp_name": "字幕备份__renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "42fe041420ce40d8b653c41fc1322358",
+      "parent_fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "original_name": "字幕备份",
+      "temp_name": "字幕备份__renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "字幕备份__renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "ffe0b5cab24d4bf686b7bee19845ca94"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "42fe041420ce40d8b653c41fc1322358",
+      "parent_fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "original_name": "字幕备份",
+      "temp_name": "字幕备份__renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "e8fe9bdf2163482ea7e734afb910dada",
+      "parent_fid": "05af64f3da5640b4b07325217089defb",
+      "original_name": "第一季",
+      "temp_name": "第一季__renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "e8fe9bdf2163482ea7e734afb910dada",
+      "parent_fid": "05af64f3da5640b4b07325217089defb",
+      "original_name": "第一季",
+      "temp_name": "第一季__renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "第一季__renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "05af64f3da5640b4b07325217089defb"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "e8fe9bdf2163482ea7e734afb910dada",
+      "parent_fid": "05af64f3da5640b4b07325217089defb",
+      "original_name": "第一季",
+      "temp_name": "第一季__renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "42122846aaa34362a9a50c0fb91be67a",
+      "parent_fid": "05af64f3da5640b4b07325217089defb",
+      "original_name": "第三季",
+      "temp_name": "第三季__renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "42122846aaa34362a9a50c0fb91be67a",
+      "parent_fid": "05af64f3da5640b4b07325217089defb",
+      "original_name": "第三季",
+      "temp_name": "第三季__renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "第三季__renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "05af64f3da5640b4b07325217089defb"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "42122846aaa34362a9a50c0fb91be67a",
+      "parent_fid": "05af64f3da5640b4b07325217089defb",
+      "original_name": "第三季",
+      "temp_name": "第三季__renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "bb1675415f944b10b4bc1e173fb0ae0e",
+      "parent_fid": "05af64f3da5640b4b07325217089defb",
+      "original_name": "第二季",
+      "temp_name": "第二季__renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "bb1675415f944b10b4bc1e173fb0ae0e",
+      "parent_fid": "05af64f3da5640b4b07325217089defb",
+      "original_name": "第二季",
+      "temp_name": "第二季__renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "第二季__renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "05af64f3da5640b4b07325217089defb"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "bb1675415f944b10b4bc1e173fb0ae0e",
+      "parent_fid": "05af64f3da5640b4b07325217089defb",
+      "original_name": "第二季",
+      "temp_name": "第二季__renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "55216fca374c4857a3d461ddb89a00e4",
+      "parent_fid": "05af64f3da5640b4b07325217089defb",
+      "original_name": "剧场版",
+      "temp_name": "剧场版__renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "55216fca374c4857a3d461ddb89a00e4",
+      "parent_fid": "05af64f3da5640b4b07325217089defb",
+      "original_name": "剧场版",
+      "temp_name": "剧场版__renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "剧场版__renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "05af64f3da5640b4b07325217089defb"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "55216fca374c4857a3d461ddb89a00e4",
+      "parent_fid": "05af64f3da5640b4b07325217089defb",
+      "original_name": "剧场版",
+      "temp_name": "剧场版__renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "e94451528dab4db693d3823d22ad58e6",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "SPs",
+      "temp_name": "SPs__renametest_193431",
+      "stage": "dir-rename",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "dir",
+      "fid": "e94451528dab4db693d3823d22ad58e6",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "SPs",
+      "temp_name": "SPs__renametest_193431",
+      "stage": "dir-verify",
+      "success": true,
+      "error": null,
+      "details": {
+        "updated_name": "SPs__renametest_193431",
+        "updated_size": 0,
+        "updated_parent": "b2b648097fcb4eec897fd7eb3b063591"
+      }
+    },
+    {
+      "item_type": "dir",
+      "fid": "e94451528dab4db693d3823d22ad58e6",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "original_name": "SPs",
+      "temp_name": "SPs__renametest_193431",
+      "stage": "dir-rollback-verify",
+      "success": true,
+      "error": null,
+      "details": {}
+    },
+    {
+      "item_type": "file",
+      "fid": "7ae40c28b5ed45fea3ea51ff9412db14",
+      "parent_fid": "bdd40843d6aa4243b6fd803d75dd6f6a",
+      "original_name": "千与千寻.2001.BluRay.1080P.H265.10bit.国粤日英四语.中日特效字幕.sup",
+      "temp_name": "TV Shows",
+      "stage": "collision-expected-fail",
+      "success": false,
+      "error": "rename succeeded unexpectedly",
+      "details": {}
+    }
+  ],
+  "notes": [
+    "candidate dir empty: smart_media_rename_test_20260205_192036",
+    "scan truncated at MAX_ITEMS_TOTAL=30"
+  ],
+  "scan": [
+    {
+      "fid": "7ae40c28b5ed45fea3ea51ff9412db14",
+      "parent_fid": "bdd40843d6aa4243b6fd803d75dd6f6a",
+      "name": "千与千寻.2001.BluRay.1080P.H265.10bit.国粤日英四语.中日特效字幕.sup",
+      "is_dir": false,
+      "size": 65847583,
+      "file_type": 1,
+      "category": 6
+    },
+    {
+      "fid": "7a36907b00db4fcb92c6583e15f2217e",
+      "parent_fid": "bdd40843d6aa4243b6fd803d75dd6f6a",
+      "name": "Movies",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "40fb05e9db30458a96f5f865eb91eebb",
+      "parent_fid": "bdd40843d6aa4243b6fd803d75dd6f6a",
+      "name": "TV Shows",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "75113af26f8f48bf930022b8fd7d37f7",
+      "parent_fid": "7a36907b00db4fcb92c6583e15f2217e",
+      "name": "【高分电影】寄生虫 (2019)【4K蓝光原盘REMUX】【杜比视界&杜比全景声国韩双语】内封简繁特效字幕",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "544100f0012d4e96bb8f5288e0c1aa73",
+      "parent_fid": "7a36907b00db4fcb92c6583e15f2217e",
+      "name": "千与千寻 (2001) 4K REMUX 国粤日英音轨 外挂简日特效字幕 104.2G",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "79af259835b840db8622f7889ccf31fc",
+      "parent_fid": "40fb05e9db30458a96f5f865eb91eebb",
+      "name": "【古见同学有交流障碍症】S01-S024K超清内附中文字幕【35G】",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "8b13db6506584a7884416297e05c6e81",
+      "parent_fid": "40fb05e9db30458a96f5f865eb91eebb",
+      "name": "《擅长捉弄的高木同学》全三季合集 【4K超清2160P收藏版】 内封中文字幕 附剧场版+OV",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "4422b898ab3d4d06bc845a9e08301b0e",
+      "parent_fid": "75113af26f8f48bf930022b8fd7d37f7",
+      "name": "寄生虫 (2019)【4K蓝光原盘REMUX】【杜比视界&杜比全景声国韩双语】内封简繁特效字幕[87G]",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "33bf1de9fb2a461491bc60f2693142b0",
+      "parent_fid": "544100f0012d4e96bb8f5288e0c1aa73",
+      "name": "千与千寻 (2001) 4K REMUX 国粤日英音轨 外挂简日特效字幕",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "parent_fid": "79af259835b840db8622f7889ccf31fc",
+      "name": "ID：12804_古见同学有交流障碍症4K",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "05af64f3da5640b4b07325217089defb",
+      "parent_fid": "8b13db6506584a7884416297e05c6e81",
+      "name": "擅长捉弄的高木同学全三季合集 4K超清2160P收藏版 内封中文字幕 附剧场版+OVA",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "6e4f43091b1e451b8c22ce612e36194e",
+      "parent_fid": "4422b898ab3d4d06bc845a9e08301b0e",
+      "name": "기생충.2019.2160p.BluRay.Remux.HEVC.Dolby Vision.Dolby TrueHD.7.1. Atmos -WuKe.mkv",
+      "is_dir": false,
+      "size": 93417895991,
+      "file_type": 1,
+      "category": 1
+    },
+    {
+      "fid": "abd9ac5433a94c249c06c2a36d3fd87b",
+      "parent_fid": "33bf1de9fb2a461491bc60f2693142b0",
+      "name": "Spirited.Away.2001.BDREMUX.AI.UPSCALE.3840x2160.alq-8.SDR.Final.mkv",
+      "is_dir": false,
+      "size": 111848489424,
+      "file_type": 1,
+      "category": 1
+    },
+    {
+      "fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "parent_fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "name": "古见同学有交流障碍症 第一季",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "ed59159a942741ef911859c505090bdb",
+      "parent_fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "name": "古见同学有交流障碍症 第二季",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "42fe041420ce40d8b653c41fc1322358",
+      "parent_fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "name": "字幕备份",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "83322139e3684115a407a8ebdc7bddf8",
+      "parent_fid": "ffe0b5cab24d4bf686b7bee19845ca94",
+      "name": "Komi-san wa Komyushou Desu. [Fonts].zip",
+      "is_dir": false,
+      "size": 304029883,
+      "file_type": 1,
+      "category": 7
+    },
+    {
+      "fid": "e8fe9bdf2163482ea7e734afb910dada",
+      "parent_fid": "05af64f3da5640b4b07325217089defb",
+      "name": "第一季",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "42122846aaa34362a9a50c0fb91be67a",
+      "parent_fid": "05af64f3da5640b4b07325217089defb",
+      "name": "第三季",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "bb1675415f944b10b4bc1e173fb0ae0e",
+      "parent_fid": "05af64f3da5640b4b07325217089defb",
+      "name": "第二季",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "55216fca374c4857a3d461ddb89a00e4",
+      "parent_fid": "05af64f3da5640b4b07325217089defb",
+      "name": "剧场版",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "e94451528dab4db693d3823d22ad58e6",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "name": "SPs",
+      "is_dir": true,
+      "size": 0,
+      "file_type": 0,
+      "category": 0
+    },
+    {
+      "fid": "14031b0ebad048a39aba8e5f61a4de05",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "name": "[12].nfo",
+      "is_dir": false,
+      "size": 11783,
+      "file_type": 1,
+      "category": 4
+    },
+    {
+      "fid": "ef626fb89d0741f8919dd4822c9a3021",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "name": "[11].nfo",
+      "is_dir": false,
+      "size": 8018,
+      "file_type": 1,
+      "category": 4
+    },
+    {
+      "fid": "d8fceb91807c4d9283a8703d274113e2",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "name": "[10].nfo",
+      "is_dir": false,
+      "size": 4952,
+      "file_type": 1,
+      "category": 4
+    },
+    {
+      "fid": "6ebf663b11ef47fea7dad4b1e7bce944",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "name": "[09].nfo",
+      "is_dir": false,
+      "size": 2619,
+      "file_type": 1,
+      "category": 4
+    },
+    {
+      "fid": "a432f6a442b94cf8b6040d018c94999d",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "name": "[08].nfo",
+      "is_dir": false,
+      "size": 5838,
+      "file_type": 1,
+      "category": 4
+    },
+    {
+      "fid": "43105791457543bcbca71b60011fe821",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "name": "[07].nfo",
+      "is_dir": false,
+      "size": 3911,
+      "file_type": 1,
+      "category": 4
+    },
+    {
+      "fid": "249b694d4e584c4cbbed95037758679d",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "name": "[06].nfo",
+      "is_dir": false,
+      "size": 2184,
+      "file_type": 1,
+      "category": 4
+    },
+    {
+      "fid": "b7c1c10c7d8140da9e386ba045ef8fd4",
+      "parent_fid": "b2b648097fcb4eec897fd7eb3b063591",
+      "name": "[05].nfo",
+      "is_dir": false,
+      "size": 4598,
+      "file_type": 1,
+      "category": 4
+    }
+  ]
+}
