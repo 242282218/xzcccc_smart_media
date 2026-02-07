@@ -15,30 +15,39 @@ jobs:
   docker-deploy-test:
     runs-on: ubuntu-latest
     timeout-minutes: 25
-    defaults:
-      run:
-        working-directory: quark_strm
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Materialize quark_strm source
+        run: |
+          SUB_SHA="$(git ls-tree HEAD quark_strm | awk '{print $3}')"
+          echo "quark_strm gitlink sha: ${SUB_SHA}"
+          git clone https://github.com/242282218/quark_strm.git quark_strm
+          git -C quark_strm checkout "${SUB_SHA}"
+
       - name: Prepare runtime files
+        working-directory: quark_strm
         run: |
           cp config.example.yaml config.yaml
           mkdir -p logs strm
           touch quark_strm.db
 
       - name: Validate compose file
+        working-directory: quark_strm
         run: docker compose config -q
 
       - name: Build docker image
+        working-directory: quark_strm
         run: docker compose build
 
       - name: Start services
+        working-directory: quark_strm
         run: docker compose up -d
 
       - name: Wait for health endpoint
+        working-directory: quark_strm
         run: |
           for i in $(seq 1 45); do
             if curl -fsS "http://127.0.0.1:8000/health" > /tmp/health.json; then
@@ -53,10 +62,12 @@ jobs:
           exit 1
 
       - name: Smoke test root endpoint
+        working-directory: quark_strm
         run: curl -fsS "http://127.0.0.1:8000/"
 
       - name: Capture runtime diagnostics
         if: always()
+        working-directory: quark_strm
         run: |
           docker compose ps > compose-ps.txt || true
           docker compose logs --no-color > compose-logs.txt || true
@@ -74,4 +85,5 @@ jobs:
 
       - name: Stop services
         if: always()
-        run: docker compose down -v --remove-orphans
+        working-directory: quark_strm
+        run: docker compose down -v --remove-orphans || true
