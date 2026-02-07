@@ -24,7 +24,7 @@ jobs:
         run: |
           SUB_SHA="$(git ls-tree HEAD quark_strm | awk '{print $3}')"
           echo "quark_strm gitlink sha: ${SUB_SHA}"
-          git clone https://github.com/242282218/quark_strm.git quark_strm
+          git clone "https://x-access-token:${{ github.token }}@github.com/242282218/quark_strm.git" quark_strm
           git -C quark_strm checkout "${SUB_SHA}"
 
       - name: Prepare runtime files
