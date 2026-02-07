@@ -21,10 +21,23 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Materialize quark_strm source
+        env:
+          QUARK_STRM_REPO_TOKEN: ${{ secrets.QUARK_STRM_REPO_TOKEN }}
         run: |
           SUB_SHA="$(git ls-tree HEAD quark_strm | awk '{print $3}')"
           echo "quark_strm gitlink sha: ${SUB_SHA}"
-          git clone "https://x-access-token:${{ github.token }}@github.com/242282218/quark_strm.git" quark_strm
+          CLONE_URL="https://x-access-token:${{ github.token }}@github.com/242282218/quark_strm.git"
+          if [ -n "${QUARK_STRM_REPO_TOKEN}" ]; then
+            CLONE_URL="https://x-access-token:${QUARK_STRM_REPO_TOKEN}@github.com/242282218/quark_strm.git"
+          else
+            echo "QUARK_STRM_REPO_TOKEN is not set; using default github.token."
+          fi
+
+          if ! git clone "${CLONE_URL}" quark_strm; then
+            echo "Failed to clone 242282218/quark_strm."
+            echo "Set repository secret QUARK_STRM_REPO_TOKEN with read access to that repo."
+            exit 1
+          fi
           git -C quark_strm checkout "${SUB_SHA}"
 
       - name: Prepare runtime files
