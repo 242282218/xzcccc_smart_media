@@ -11,9 +11,6 @@ on:
 jobs:
   pytest:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: quark_strm
 
     steps:
       - name: Checkout
@@ -25,12 +22,17 @@ jobs:
         env:
           QUARK_STRM_REPO_TOKEN: ${{ secrets.QUARK_STRM_REPO_TOKEN }}
         run: |
-          SUB_SHA="$(git ls-tree HEAD quark_strm | awk '{print $3}')"
+          SUB_SHA="$(git rev-parse HEAD:quark_strm 2>/dev/null || git ls-tree HEAD quark_strm | awk '{print $3}')"
           echo "quark_strm gitlink sha: ${SUB_SHA}"
+          if [ -z "${SUB_SHA}" ]; then
+            echo "ERROR: Could not extract quark_strm SHA from gitlink"
+            exit 1
+          fi
           CLONE_URL="https://x-access-token:${{ github.token }}@github.com/242282218/quark_strm.git"
           if [ -n "${QUARK_STRM_REPO_TOKEN}" ]; then
             CLONE_URL="https://x-access-token:${QUARK_STRM_REPO_TOKEN}@github.com/242282218/quark_strm.git"
           fi
+          rm -rf quark_strm
           git clone "${CLONE_URL}" quark_strm
           git -C quark_strm checkout "${SUB_SHA}"
 
@@ -42,21 +44,25 @@ jobs:
           cache-dependency-path: quark_strm/requirements.txt
 
       - name: Install Dependencies
+        working-directory: quark_strm
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest pytest-asyncio pytest-cov
 
       - name: Create runtime directories
+        working-directory: quark_strm
         run: |
           mkdir -p logs strm
           touch quark_strm.db
 
       - name: Copy example config
+        working-directory: quark_strm
         run: |
           cp config.example.yaml config.yaml || true
 
       - name: Run Tests
+        working-directory: quark_strm
         run: |
           pytest tests/ -v --tb=short --cov=app --cov-report=term-missing
         continue-on-error: true
