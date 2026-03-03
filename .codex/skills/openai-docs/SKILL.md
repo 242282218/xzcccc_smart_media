@@ -1,6 +1,6 @@
 ---
 name: "openai-docs"
-description: "Use when the user asks how to build with OpenAI products or APIs and needs up-to-date official documentation with citations (for example: Codex, Responses API, Chat Completions, Apps SDK, Agents SDK, Realtime, model capabilities or limits); prioritize OpenAI docs MCP tools and restrict any fallback browsing to official OpenAI domains."
+description: "当用户咨询 OpenAI 产品或 API 的构建方式并需要可引用的最新官方文档时使用。优先使用 OpenAI docs MCP 工具，必要回退检索仅限 OpenAI 官方域名。"
 ---
 
 

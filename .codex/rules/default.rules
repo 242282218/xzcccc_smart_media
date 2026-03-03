@@ -1,0 +1,57 @@
+# Default command policy rules for Codex.
+# This file is parsed as Starlark.
+#
+# Project workflow guidance belongs in AGENTS.md / .codex/core/*.md.
+# This .rules file only controls command approval policy via prefix_rule().
+#
+# No active command policy rules are defined yet.
+# Add prefix_rule(...) entries when needed, for example:
+# prefix_rule(
+#     pattern = ["gh", "pr", "view"],
+#     decision = "prompt",
+#     justification = "Review PR view commands before running outside sandbox.",
+# )
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "$temp='C:\\Users\\24228\\Desktop\\ai-auto-deepstremth\\poc-trae-extension\\_vsix_inspect'; if(Test-Path $temp){Remove-Item -Recurse -Force $temp}; Expand-Archive -Path '.\\poc-trae-extension\\poc-trae-extension-0.0.4.vsix' -DestinationPath $temp; Get-ChildItem -Recurse -Path $temp | Select-Object -First 40 -ExpandProperty FullName"], decision="allow")
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "$vsix='.\\poc-trae-extension\\poc-trae-extension-0.0.4.vsix'; $zip='.\\poc-trae-extension\\poc-trae-extension-0.0.4.zip'; Copy-Item $vsix $zip -Force; $temp='.\\poc-trae-extension\\_vsix_inspect'; if(Test-Path $temp){Remove-Item -Recurse -Force $temp}; Expand-Archive -Path $zip -DestinationPath $temp; Get-ChildItem -Recurse -Path $temp | Select-Object -First 80 -ExpandProperty FullName"], decision="allow")
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "$root='C:\\Users\\24228\\Desktop\\ai-auto-deepstremth\\poc-trae-extension'; $stage=Join-Path $root '_vsix_inspect'; Copy-Item (Join-Path $root 'src\\extension.ts') (Join-Path $stage 'extension\\src\\extension.ts') -Force; Copy-Item (Join-Path $root 'out\\extension.js') (Join-Path $stage 'extension\\out\\extension.js') -Force; Copy-Item (Join-Path $root 'out\\extension.js.map') (Join-Path $stage 'extension\\out\\extension.js.map') -Force; Copy-Item (Join-Path $root 'package.json') (Join-Path $stage 'extension\\package.json') -Force; $manifestPath=Join-Path $stage 'extension.vsixmanifest'; $manifest=Get-Content -Raw -Path $manifestPath; $manifest=$manifest -replace 'Version=\"0.0.4\"','Version=\"0.0.5\"'; Set-Content -Path $manifestPath -Value $manifest -Encoding UTF8; $zip=Join-Path $root 'poc-trae-extension-0.0.5.zip'; $vsix=Join-Path $root 'poc-trae-extension-0.0.5.vsix'; if(Test-Path $zip){Remove-Item $zip -Force}; if(Test-Path $vsix){Remove-Item $vsix -Force}; Compress-Archive -Path (Join-Path $stage 'extension'),(Join-Path $stage 'extension.vsixmanifest'),(Join-Path $stage '[Content_Types].xml') -DestinationPath $zip -CompressionLevel Optimal; Move-Item $zip $vsix -Force; Write-Output $vsix"], decision="allow")
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "& 'D:\\Users\\24228\\AppData\\Local\\Programs\\Trae CN\\bin\\trae.cmd' --install-extension 'C:\\Users\\24228\\Desktop\\ai-auto-deepstremth\\poc-trae-extension\\poc-trae-extension-0.0.5.vsix' --force"], decision="allow")
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "$vsix='.\\poc-trae-extension\\poc-trae-extension-0.0.5.vsix'; $zip='.\\poc-trae-extension\\poc-trae-extension-0.0.5.zip'; Copy-Item $vsix $zip -Force; $tmp='.\\poc-trae-extension\\_vsix_verify'; if(Test-Path $tmp){Remove-Item -Recurse -Force $tmp}; Expand-Archive -Path $zip -DestinationPath $tmp; Select-String -Path '.\\poc-trae-extension\\_vsix_verify\\extension\\out\\extension.js' -Pattern '/api/commands|auto_select_model|execute_command|0.0.5'"], decision="allow")
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "taskkill /IM \"Trae CN.exe\" /F"], decision="allow")
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "Start-Process 'D:\\Users\\24228\\AppData\\Local\\Programs\\Trae CN\\Trae CN.exe'"], decision="allow")
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "$root='C:\\Users\\24228\\Desktop\\ai-auto-deepstremth\\poc-trae-extension'; @('_vsix_inspect','_vsix_verify','poc-trae-extension-0.0.4.zip','poc-trae-extension-0.0.5.zip') | ForEach-Object { $p=Join-Path $root $_; if(Test-Path $p){ Remove-Item -Recurse -Force $p } }; Write-Output 'cleanup_done'"], decision="allow")
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "$root='C:\\Users\\24228\\Desktop\\ai-auto-deepstremth\\poc-trae-extension'; $stage=Join-Path $root '_vsix_stage_006'; if(Test-Path $stage){Remove-Item -Recurse -Force $stage}; $zipSrc=Join-Path $root 'poc-trae-extension-0.0.5.zip'; Copy-Item (Join-Path $root 'poc-trae-extension-0.0.5.vsix') $zipSrc -Force; Expand-Archive -Path $zipSrc -DestinationPath $stage -Force; Copy-Item (Join-Path $root 'src\\extension.ts') (Join-Path $stage 'extension\\src\\extension.ts') -Force; Copy-Item (Join-Path $root 'out\\extension.js') (Join-Path $stage 'extension\\out\\extension.js') -Force; Copy-Item (Join-Path $root 'out\\extension.js.map') (Join-Path $stage 'extension\\out\\extension.js.map') -Force; Copy-Item (Join-Path $root 'package.json') (Join-Path $stage 'extension\\package.json') -Force; $manifestPath=Join-Path $stage 'extension.vsixmanifest'; $manifest=Get-Content -Raw -Path $manifestPath; $manifest=$manifest -replace 'Version=\"0.0.5\"','Version=\"0.0.6\"'; Set-Content -Path $manifestPath -Value $manifest -Encoding UTF8; $zipOut=Join-Path $root 'poc-trae-extension-0.0.6.zip'; $vsixOut=Join-Path $root 'poc-trae-extension-0.0.6.vsix'; if(Test-Path $zipOut){Remove-Item $zipOut -Force}; if(Test-Path $vsixOut){Remove-Item $vsixOut -Force}; Compress-Archive -Path (Join-Path $stage 'extension'),(Join-Path $stage 'extension.vsixmanifest'),(Join-Path $stage '[Content_Types].xml') -DestinationPath $zipOut -CompressionLevel Optimal; Move-Item $zipOut $vsixOut -Force; Write-Output $vsixOut"], decision="allow")
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "$vsix='.\\poc-trae-extension\\poc-trae-extension-0.0.6.vsix'; $zip='.\\poc-trae-extension\\poc-trae-extension-0.0.6.zip'; Copy-Item $vsix $zip -Force; $tmp='.\\poc-trae-extension\\_vsix_verify_006'; if(Test-Path $tmp){Remove-Item -Recurse -Force $tmp}; Expand-Archive -Path $zip -DestinationPath $tmp; Select-String -Path '.\\poc-trae-extension\\_vsix_verify_006\\extension\\out\\extension.js' -Pattern 'state\\.vscdb|node:sqlite|0.0.6|fallback model catalog applied'; Select-String -Path '.\\poc-trae-extension\\_vsix_verify_006\\extension.vsixmanifest' -Pattern 'Version='"], decision="allow")
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "& 'D:\\Users\\24228\\AppData\\Local\\Programs\\Trae CN\\bin\\trae.cmd' --install-extension 'C:\\Users\\24228\\Desktop\\ai-auto-deepstremth\\poc-trae-extension\\poc-trae-extension-0.0.6.vsix' --force"], decision="allow")
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "$root='C:\\Users\\24228\\Desktop\\ai-auto-deepstremth\\poc-trae-extension'; @('_vsix_stage_006','_vsix_verify_006','poc-trae-extension-0.0.5.zip','poc-trae-extension-0.0.6.zip') | ForEach-Object { $p=Join-Path $root $_; if(Test-Path $p){ Remove-Item -Recurse -Force $p } }; Write-Output 'cleanup_done'"], decision="allow")
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "New-Item -ItemType Directory -Path C:\\Users\\24228\\.codex\\skills\\trae-auto\\agents -Force | Out-Null; New-Item -ItemType Directory -Path C:\\Users\\24228\\.codex\\skills\\trae-auto\\references -Force | Out-Null; Write-Output 'created'"], decision="allow")
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "$p = Start-Process node -ArgumentList 'server.js' -WorkingDirectory 'C:\\Users\\24228\\Desktop\\ai-auto-deepstremth\\beautiful-frontend-9999' -PassThru; Start-Sleep -Seconds 1; try { (Invoke-WebRequest -Uri 'http://127.0.0.1:9999/').StatusCode } finally { Stop-Process -Id $p.Id -Force }"], decision="allow")
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "$p = Start-Process node -ArgumentList 'server.js' -WorkingDirectory 'C:\\Users\\24228\\Desktop\\ai-auto-deepstremth\\beautiful-frontend-9999' -PassThru; Start-Sleep -Seconds 1; try { curl.exe -s -o NUL -w \"%{http_code}\" 'http://127.0.0.1:9999/' } finally { Stop-Process -Id $p.Id -Force }"], decision="allow")
+
+# Allow all PowerShell commands implicitly
+prefix_rule(
+    pattern = ["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"],
+    decision = "allow",
+    justification = "Allow all powershell commands for automation"
+)
+prefix_rule(
+    pattern = ["npm"],
+    decision = "allow",
+    justification = "Allow all npm commands"
+)
+prefix_rule(
+    pattern = ["npx"],
+    decision = "allow",
+    justification = "Allow all npx commands"
+)
+prefix_rule(
+    pattern = ["python"],
+    decision = "allow",
+    justification = "Allow all python commands"
+)
+prefix_rule(
+    pattern = ["node"],
+    decision = "allow",
+    justification = "Allow all node commands"
+)
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "$dest='poc-trae-extension\\.tmp\\vsix-0.0.10'; if (Test-Path $dest) { Remove-Item -Recurse -Force $dest }; New-Item -ItemType Directory -Path $dest | Out-Null; Expand-Archive -Path 'poc-trae-extension\\poc-trae-extension-0.0.10.vsix' -DestinationPath $dest -Force; Get-ChildItem -Recurse $dest | Select-Object FullName,Length"], decision="allow")
+prefix_rule(pattern=["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-Command", "$dest='poc-trae-extension\\.tmp\\vsix-0.0.10'; $zip='poc-trae-extension\\.tmp\\poc-trae-extension-0.0.10.zip'; if (Test-Path $dest) { Remove-Item -Recurse -Force $dest }; New-Item -ItemType Directory -Path $dest | Out-Null; Copy-Item 'poc-trae-extension\\poc-trae-extension-0.0.10.vsix' $zip -Force; Expand-Archive -Path $zip -DestinationPath $dest -Force; Get-ChildItem -Recurse $dest | Select-Object FullName,Length"], decision="allow")

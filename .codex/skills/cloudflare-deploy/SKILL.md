@@ -1,6 +1,6 @@
 ---
 name: cloudflare-deploy
-description: Deploy applications and infrastructure to Cloudflare using Workers, Pages, and related platform services. Use when the user asks to deploy, host, publish, or set up a project on Cloudflare.
+description: Cloudflare 部署技能。用于使用 Workers、Pages 等平台能力部署应用与基础设施，适用于托管、发布与上线相关任务。
 ---
 
 # Cloudflare Deploy

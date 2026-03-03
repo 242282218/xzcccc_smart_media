@@ -1,6 +1,6 @@
 ---
 name: "playwright"
-description: "Use when the task requires automating a real browser from the terminal (navigation, form filling, snapshots, screenshots, data extraction, UI-flow debugging) via `playwright-cli` or the bundled wrapper script."
+description: "当任务需要在终端自动化真实浏览器时使用（导航、表单填写、截图、数据提取、UI 流程调试等），通过 `playwright-cli` 或封装脚本执行。"
 ---
 
 
@@ -25,7 +25,7 @@ node --version
 npm --version
 
 # If missing, install Node.js/npm, then:
-npm install -g @playwright/mcp@latest
+npm install -g @playwright/cli@latest
 playwright-cli --help
 ```
 
@@ -56,7 +56,7 @@ Use the wrapper script:
 If the user prefers a global install, this is also valid:
 
 ```bash
-npm install -g @playwright/mcp@latest
+npm install -g @playwright/cli@latest
 playwright-cli --help
 ```
 
@@ -121,7 +121,7 @@ Refs can go stale. When a command fails due to a missing ref, snapshot again.
 
 ## Wrapper script
 
-The wrapper script uses `npx --package @playwright/mcp playwright-cli` so the CLI can run without a global install:
+The wrapper script uses `npx --package @playwright/cli playwright-cli` so the CLI can run without a global install:
 
 ```bash
 "$PWCLI" --help
