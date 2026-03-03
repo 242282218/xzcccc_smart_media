@@ -19,6 +19,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Materialize quark_strm source
+        env:
+          QUARK_STRM_REPO_TOKEN: ${{ secrets.QUARK_STRM_REPO_TOKEN }}
+        run: |
+          SUB_SHA="$(git ls-tree HEAD quark_strm | awk '{print $3}')"
+          echo "quark_strm gitlink sha: ${SUB_SHA}"
+          CLONE_URL="https://x-access-token:${{ github.token }}@github.com/242282218/quark_strm.git"
+          if [ -n "${QUARK_STRM_REPO_TOKEN}" ]; then
+            CLONE_URL="https://x-access-token:${QUARK_STRM_REPO_TOKEN}@github.com/242282218/quark_strm.git"
+          fi
+          git clone "${CLONE_URL}" quark_strm
+          git -C quark_strm checkout "${SUB_SHA}"
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
