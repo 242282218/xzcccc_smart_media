@@ -1,0 +1,30 @@
+# =============================================================================
+# CodeQL Configuration for quark_strm
+# Custom query suite for security analysis
+# =============================================================================
+
+name: "Custom CodeQL Configuration"
+
+# Disable default queries
+queries:
+  - uses: security-and-quality
+  - uses: security-extended
+
+# Paths to include in analysis
+paths:
+  - quark_strm/app
+  - quark_strm/core
+  - quark_strm/services
+  - quark_strm/models
+  - quark_strm/schemas
+  - quark_strm/utils
+
+# Paths to exclude from analysis
+paths-ignore:
+  - quark_strm/tests
+  - quark_strm/migrations
+  - quark_strm/.venv
+  - quark_strm/node_modules
+  - '**/test_*.py'
+  - '**/*_test.py'
+  - '**/__pycache__'

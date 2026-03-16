@@ -1,0 +1,408 @@
+# =============================================================================
+# Security Scan Pipeline for quark_strm
+# Comprehensive Security Scanning Workflow
+# =============================================================================
+# Scans:
+#   1. Dependency Vulnerability Scan (pip-audit, Trivy)
+#   2. SAST - Static Application Security Testing (CodeQL, Semgrep)
+#   3. Secret Detection (Gitleaks, TruffleHog)
+#   4. Container Security (Trivy image scan)
+#   5. License Compliance
+# =============================================================================
+
+name: Security Scan
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - develop
+    paths:
+      - 'quark_strm/**'
+      - '.github/workflows/security-scan.yml'
+  pull_request:
+    branches:
+      - main
+      - master
+      - develop
+    paths:
+      - 'quark_strm/**'
+      - '.github/workflows/security-scan.yml'
+  schedule:
+    # Run security scan every day at 2:00 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: '3.11'
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+concurrency:
+  group: security-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ===========================================================================
+  # Job 1: Dependency Vulnerability Scan
+  # ===========================================================================
+  dependency-scan:
+    name: Dependency Vulnerability Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+          cache-dependency-path: quark_strm/requirements.txt
+
+      - name: Cache pip-audit
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip-audit
+          key: ${{ runner.os }}-pip-audit-${{ hashFiles('quark_strm/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-audit-
+
+      # --- pip-audit ---
+      - name: Install pip-audit
+        run: pip install pip-audit
+
+      - name: Run pip-audit
+        id: pip-audit
+        working-directory: quark_strm
+        run: |
+          pip-audit -r requirements.txt \
+            --format=json \
+            --output=dependency-vulns.json \
+            --skip-editable \
+            --no-deps || echo "Vulnerabilities found"
+        continue-on-error: true
+
+      - name: Upload pip-audit results
+        uses: actions/upload-artifact@v4
+        with:
+          name: pip-audit-results
+          path: quark_strm/dependency-vulns.json
+          if-no-files-found: warn
+
+      # --- Trivy filesystem scan ---
+      - name: Run Trivy filesystem scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: './quark_strm'
+          format: 'table'
+          output: 'trivy-fs-results.txt'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'
+          ignore-unfixed: true
+        continue-on-error: true
+
+      - name: Run Trivy filesystem scan (SARIF)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: './quark_strm'
+          format: 'sarif'
+          output: 'trivy-fs-results.sarif'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+        continue-on-error: true
+
+      - name: Upload Trivy FS results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-fs-results.sarif'
+          category: 'trivy-filesystem'
+        continue-on-error: true
+
+      - name: Upload Trivy scan artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-fs-results
+          path: |
+            trivy-fs-results.txt
+            trivy-fs-results.sarif
+          if-no-files-found: warn
+
+  # ===========================================================================
+  # Job 2: SAST - Static Application Security Testing
+  # ===========================================================================
+  sast:
+    name: SAST Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # --- CodeQL Analysis ---
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: python
+          queries: security-and-quality
+          config-file: ./.github/codeql-config.yml
+        continue-on-error: true
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:python"
+        continue-on-error: true
+
+      # --- Semgrep Analysis ---
+      - name: Run Semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/secrets
+            p/python
+            p/owasp-top-ten
+            p/ci
+          generate-sarif: true
+          sarif-output: semgrep-results.sarif
+        continue-on-error: true
+
+      - name: Upload Semgrep results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep-results.sarif
+          category: 'semgrep'
+        continue-on-error: true
+
+      # --- Bandit ---
+      - name: Setup Python for Bandit
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Bandit
+        run: pip install bandit bandit-sarif-formatter
+
+      - name: Run Bandit
+        working-directory: quark_strm
+        run: |
+          bandit -r app/ \
+            -f sarif \
+            -o bandit-results.sarif \
+            --exclude tests/,migrations/ \
+            -ll || echo "Security issues found"
+        continue-on-error: true
+
+      - name: Upload Bandit results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'quark_strm/bandit-results.sarif'
+          category: 'bandit'
+        continue-on-error: true
+
+  # ===========================================================================
+  # Job 3: Secret Detection
+  # ===========================================================================
+  secret-scan:
+    name: Secret Detection
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # --- Gitleaks ---
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}
+        continue-on-error: true
+
+      # --- TruffleHog ---
+      - name: Run TruffleHog
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: ${{ github.event.repository.default_branch }}
+          extra_args: --debug --only-verified
+        continue-on-error: true
+
+      # --- Secret detection summary ---
+      - name: Secret scan summary
+        run: |
+          echo "## Secret Detection Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Secret scanning completed. Check the job logs for any detected secrets." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Tools Used" >> $GITHUB_STEP_SUMMARY
+          echo "- Gitleaks" >> $GITHUB_STEP_SUMMARY
+          echo "- TruffleHog" >> $GITHUB_STEP_SUMMARY
+
+  # ===========================================================================
+  # Job 4: License Compliance
+  # ===========================================================================
+  license-check:
+    name: License Compliance
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install license check tools
+        run: |
+          pip install pip-licenses pip-license-checker
+
+      - name: Generate license report
+        working-directory: quark_strm
+        run: |
+          pip install -r requirements.txt --dry-run
+          pip-licenses --format=json --output-file=licenses.json || true
+          pip-licenses --format=plain --output-file=licenses.txt || true
+        continue-on-error: true
+
+      - name: Check for forbidden licenses
+        working-directory: quark_strm
+        run: |
+          pip-license-checker \
+            --requirements requirements.txt \
+            --allow "MIT,Apache-2.0,BSD-2-Clause,BSD-3-Clause,ISC,Python-2.0,MPL-2.0,LGPL-2.1,LGPL-3.0" \
+            --warning "GPL-2.0,GPL-3.0" \
+            --forbidden "AGPL-3.0,SSPL-1.0" \
+            --json license-check-results.json || echo "License issues found"
+        continue-on-error: true
+
+      - name: Upload license reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: license-reports
+          path: |
+            quark_strm/licenses.json
+            quark_strm/licenses.txt
+            quark_strm/license-check-results.json
+          if-no-files-found: warn
+
+  # ===========================================================================
+  # Job 5: Container Security Scan
+  # ===========================================================================
+  container-scan:
+    name: Container Security Scan
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, sast]
+    if: github.event_name != 'pull_request'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image for scanning
+        working-directory: quark_strm
+        run: |
+          docker build -t quark-strm:scan .
+
+      - name: Run Trivy container scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'quark-strm:scan'
+          format: 'table'
+          output: 'trivy-container-results.txt'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'
+        continue-on-error: true
+
+      - name: Run Trivy container scan (SARIF)
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'quark-strm:scan'
+          format: 'sarif'
+          output: 'trivy-container-results.sarif'
+          severity: 'CRITICAL,HIGH,MEDIUM'
+        continue-on-error: true
+
+      - name: Upload Trivy container results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-container-results.sarif'
+          category: 'trivy-container'
+        continue-on-error: true
+
+      - name: Run Grype container scan
+        uses: anchore/scan-action@v3
+        with:
+          image: 'quark-strm:scan'
+          output-format: sarif
+          severity: critical,high
+        continue-on-error: true
+
+      - name: Upload Grype results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
+          category: 'grype-container'
+        continue-on-error: true
+
+      - name: Upload container scan artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: container-scan-results
+          path: |
+            trivy-container-results.txt
+            trivy-container-results.sarif
+            results.sarif
+          if-no-files-found: warn
+
+  # ===========================================================================
+  # Job 6: Security Summary
+  # ===========================================================================
+  security-summary:
+    name: Security Summary
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, sast, secret-scan, license-check]
+    if: always()
+
+    steps:
+      - name: Generate security summary
+        run: |
+          echo "## Security Scan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Scan Results" >> $GITHUB_STEP_SUMMARY
+          echo "| Scan Type | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Dependency Vulnerability | ${{ needs.dependency-scan.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| SAST Analysis | ${{ needs.sast.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Secret Detection | ${{ needs.secret-scan.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| License Compliance | ${{ needs.license-check.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### View Results" >> $GITHUB_STEP_SUMMARY
+          echo "- [Security Tab](https://github.com/${{ github.repository }}/security)" >> $GITHUB_STEP_SUMMARY
+          echo "- [Code Scanning Alerts](https://github.com/${{ github.repository }}/security/code-scanning)" >> $GITHUB_STEP_SUMMARY
+          echo "- [Secret Scanning](https://github.com/${{ github.repository }}/security/secret-scanning)" >> $GITHUB_STEP_SUMMARY
+
+      - name: Check for critical failures
+        run: |
+          if [[ "${{ needs.dependency-scan.result }}" == "failure" ]] || \
+             [[ "${{ needs.sast.result }}" == "failure" ]] || \
+             [[ "${{ needs.secret-scan.result }}" == "failure" ]]; then
+            echo "::warning::Security scan detected issues. Please review the results."
+          fi
+          echo "Security scan completed successfully."

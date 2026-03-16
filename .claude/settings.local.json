@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -v \"^\\\\.$\")",
+      "Bash(grep -v \"^\\\\.\\\\.$\")",
+      "Bash(cd quark_strm/web && npm run build 2>&1 | head -50)",
+      "Bash(cd quark_strm/web && npm run type-check 2>&1 | head -100)",
+      "Bash(cd quark_strm && cp config.example.yaml config.yaml 2>/dev/null || echo \"Already exists or copy failed\")",
+      "Bash(cd quark_strm && cp config.example.yaml config.yaml)",
+      "Bash(python -c \"import ast; ast.parse\\(open\\('tests/test_auth.py'\\).read\\(\\)\\)\" 2>&1 | head -20)",
+      "Bash(python -m py_compile quark_strm/tests/test_auth.py 2>&1 || echo \"Still has errors\")",
+      "Bash(python -m py_compile tests/test_auth.py 2>&1 && echo \"✓ Syntax fixed\" || echo \"✗ Still has errors\")",
+      "Bash(cat > pytest.ini << 'EOF'\n[pytest]\ntestpaths = tests\npython_files = test_*.py\npython_classes = Test*\npython_functions = test_*\naddopts = -v --tb=short --strict-markers --disable-warnings\nmarkers =\n    unit: Unit tests\n    integration: Integration tests\n    slow: Slow running tests\nEOF\necho \"✓ pytest.ini created\")",
+      "Bash(python -m pytest --collect-only 2>&1 | head -30)",
+      "Bash(cd quark_strm && python -m pytest --collect-only 2>&1 | grep -B 5 -A 10 \"ERROR\")",
+      "Bash(find /c/Users/24228/Desktop/smart_media/quark_strm/web/src -type f \\\\\\( -name \"*.css\" -o -name \"*.scss\" -o -name \"*.vue\" \\\\\\) 2>/dev/null | grep -E \"\\(animation|style|component\\)\" | head -20)",
+      "Bash(find /c/Users/24228/Desktop/smart_media/quark_strm/web/src -name \"*.vue\" -type f | xargs grep -l \"transition\\\\|animation\" | head -10)",
+      "Skill(request-analyzer)",
+      "Bash(cmd /c npx -y @modelcontextprotocol/server-time --help)",
+      "Bash(uvx mcp-server-git:*)"
+    ]
+  }
+}
