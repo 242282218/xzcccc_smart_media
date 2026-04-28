@@ -1,4 +1,4 @@
-name: Pytest
+name: CI
 
 on:
   push:
@@ -7,29 +7,32 @@ on:
     paths:
       - "app/**"
       - "tests/**"
+      - "web/**"
       - "requirements.txt"
       - "pytest.ini"
+      - "pyproject.toml"
       - ".github/workflows/ci.yml"
-      - ".github/workflows/pytest.yml"
   pull_request:
     branches:
       - "**"
     paths:
       - "app/**"
       - "tests/**"
+      - "web/**"
       - "requirements.txt"
       - "pytest.ini"
+      - "pyproject.toml"
       - ".github/workflows/ci.yml"
-      - ".github/workflows/pytest.yml"
   workflow_dispatch:
 
 env:
   PYTHON_VERSION: "3.11"
+  NODE_VERSION: "22"
   COVERAGE_FAIL_UNDER: ${{ vars.QUARK_STRM_COVERAGE_FAIL_UNDER || '66' }}
 
 jobs:
-  tests:
-    name: Pytest
+  backend:
+    name: Backend Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -55,7 +58,7 @@ jobs:
           touch quark_strm.db
           cp config.example.yaml config.yaml || true
 
-      - name: Run Tests
+      - name: Run tests with coverage
         run: |
           pytest tests/ \
             -v \
@@ -69,6 +72,41 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: pytest-coverage
+          name: ci-coverage
           path: coverage.xml
           if-no-files-found: warn
+
+  frontend:
+    name: Frontend Checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+
+      - name: Run oxlint
+        working-directory: web
+        run: npm run lint:oxlint
+
+      - name: Run ESLint
+        working-directory: web
+        run: npm run lint:eslint
+
+      - name: TypeScript type check
+        working-directory: web
+        run: npm run type-check
+
+      - name: Run smoke tests
+        working-directory: web
+        run: npm run test:smoke -- --reporter=dot
