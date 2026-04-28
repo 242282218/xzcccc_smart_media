@@ -205,6 +205,10 @@ def test_docker_workflows_deploy_the_intended_image() -> None:
     assert "SMART_MEDIA_UID=$(id -u)" in publish_workflow
     assert "SMART_MEDIA_GID=$(id -g)" in publish_workflow
     assert "mkdir -p logs strm data" in publish_workflow
+    assert "id-token: write" in publish_workflow
+    assert "steps.build-backend.outputs.digest" in publish_workflow
+    assert "steps.build-frontend.outputs.digest" in publish_workflow
+    assert "steps.meta.outputs.digest" not in publish_workflow
     assert "docker compose --profile frontend up --pull never -d" in publish_workflow
     assert "http://127.0.0.1:8000/ready" in publish_workflow
     assert "http://127.0.0.1:18080/" in publish_workflow
