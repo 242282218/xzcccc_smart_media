@@ -212,6 +212,8 @@ def test_docker_workflows_deploy_the_intended_image() -> None:
     assert "timeout-minutes: 45" in publish_workflow
     assert "cache-from: type=gha,scope=backend" in publish_workflow
     assert "cache-from: type=gha,scope=frontend-runtime" in publish_workflow
+    assert "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}" in publish_workflow
+    assert "if [[ -f .env ]]; then" in publish_workflow
     assert "docker compose --profile frontend up --pull never -d" in publish_workflow
     assert "http://127.0.0.1:8000/ready" in publish_workflow
     assert "http://127.0.0.1:18080/" in publish_workflow

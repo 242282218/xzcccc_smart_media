@@ -96,7 +96,9 @@ jobs:
           file: Dockerfile
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: |
+            ${{ steps.meta.outputs.tags }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=backend
           cache-to: type=gha,mode=max,scope=backend
@@ -206,7 +208,10 @@ jobs:
 
       - name: Stop services
         if: always()
-        run: docker compose down -v --remove-orphans
+        run: |
+          if [[ -f .env ]]; then
+            docker compose down -v --remove-orphans
+          fi
 
   # ===========================================================================
   # Job 3: Security Scan
