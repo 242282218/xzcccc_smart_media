@@ -155,6 +155,8 @@ jobs:
             echo "QUARK_STRM_FRONTEND_IMAGE=${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ needs.build-and-push.outputs.version }}"
             echo "SMART_MEDIA_EMBY_PROXY_PORT=18097"
             echo "SMART_MEDIA_FRONTEND_PORT=18080"
+            echo "SMART_MEDIA_UID=$(id -u)"
+            echo "SMART_MEDIA_GID=$(id -g)"
           } >> .env
           cp config.example.yaml config.yaml
           mkdir -p logs strm

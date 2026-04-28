@@ -73,6 +73,7 @@ test_quark_files.py
 .claude/
 playwright-report/
 test-results/
+.gh-artifacts/
 web/playwright-report/
 web/test-results/
 tests/verify_*.py

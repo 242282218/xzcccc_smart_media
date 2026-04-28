@@ -66,6 +66,8 @@ docker compose up -d
 | `SMART_MEDIA_LOG_FORMAT` | 容器日志格式 | `json` |
 | `SMART_MEDIA_LOG_LEVEL` | 应用日志级别 | `INFO` |
 | `TZ` | 容器时区 | `Asia/Shanghai` |
+| `SMART_MEDIA_UID` | 后端容器运行 UID，用于写入 bind mount 目录 | `1000` |
+| `SMART_MEDIA_GID` | 后端容器运行 GID，用于写入 bind mount 目录 | `1000` |
 
 #### 生产安全与单 worker 约束
 
@@ -111,6 +113,7 @@ docker compose --profile frontend up -d
 - `./logs:/app/logs`
 
 容器内始终通过 `CONFIG_PATH=/app/config.yaml` 读取配置，敏感值优先使用 `.env` 覆盖 `config.yaml`。认证密钥推荐使用 `SMART_MEDIA_SECURITY_API_KEY`；历史别名 `SMART_MEDIA_API_KEY` 与 `API_KEY` 仅保留兼容。
+后端容器默认以 `SMART_MEDIA_UID:SMART_MEDIA_GID` 运行；Linux bind mount 部署时应设置为宿主机运行用户的 `id -u` 与 `id -g`，确保 `logs/`、`strm/` 和 `quark_strm.db` 可写。
 
 #### 本地运行产物目录约定
 

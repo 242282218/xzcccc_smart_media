@@ -13,6 +13,7 @@ services:
       - ./quark_strm.db:/app/quark_strm.db
       - ./strm:/app/strm
       - ./logs:/app/logs
+    user: "${SMART_MEDIA_UID:-1000}:${SMART_MEDIA_GID:-1000}"
     # Load environment variables from .env file
     # Priority: .env file > config.yaml values
     env_file:
