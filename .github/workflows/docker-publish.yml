@@ -32,6 +32,7 @@ jobs:
   build-and-push:
     name: Build and Push
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     permissions:
       contents: read
       id-token: write
@@ -97,8 +98,8 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
           build-args: |
             BUILD_DATE=${{ github.event.head_commit.timestamp }}
             VCS_REF=${{ github.sha }}
@@ -117,8 +118,8 @@ jobs:
             ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ steps.version.outputs.version }}
             ${{ env.REGISTRY }}/${{ env.FRONTEND_IMAGE_NAME }}:latest
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=frontend-runtime
+          cache-to: type=gha,mode=max,scope=frontend-runtime
 
       - name: Sign the published Docker image
         if: github.event_name != 'pull_request'
