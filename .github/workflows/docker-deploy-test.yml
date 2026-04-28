@@ -188,8 +188,7 @@ jobs:
             echo "SMART_MEDIA_GID=$(id -g)"
           } >> .env
           cp config.example.yaml config.yaml
-          mkdir -p logs strm
-          touch quark_strm.db
+          mkdir -p logs strm data
 
       - name: Validate compose file
         run: docker compose config -q
@@ -269,8 +268,7 @@ jobs:
             echo "SMART_MEDIA_GID=$(id -g)"
           } >> .env
           cp config.example.yaml config.yaml
-          mkdir -p logs strm
-          touch quark_strm.db
+          mkdir -p logs strm data
 
       - name: Start services
         run: docker compose --profile frontend up --pull never -d

@@ -67,11 +67,13 @@ def test_compose_mounts_and_env_example_match_runtime_contract() -> None:
     assert "SMART_MEDIA_LOG_FORMAT" in env_keys
     assert "SMART_MEDIA_UID" in env_keys
     assert "SMART_MEDIA_GID" in env_keys
+    assert "SMART_MEDIA_DATABASE" in env_keys
     assert "TZ" in env_keys
 
     assert service["user"] == "${SMART_MEDIA_UID:-1000}:${SMART_MEDIA_GID:-1000}"
 
     environment = "\n".join(service["environment"])
+    assert "SMART_MEDIA_DATABASE=${SMART_MEDIA_DATABASE:-data/quark_strm.db}" in environment
     assert "SMART_MEDIA_ENV=${SMART_MEDIA_ENV:-development}" in environment
     assert "SMART_MEDIA_LOG_FORMAT=${SMART_MEDIA_LOG_FORMAT:-json}" in environment
     assert "CONFIG_PATH=/app/config.yaml" in environment
@@ -128,6 +130,8 @@ def test_operations_doc_matches_bootstrap_contract() -> None:
     assert "SMART_MEDIA_FRONTEND_PORT" in document
     assert "SMART_MEDIA_UID" in document
     assert "SMART_MEDIA_GID" in document
+    assert "SMART_MEDIA_DATABASE" in document
+    assert "data/quark_strm.db" in document
     assert "WEB_CONCURRENCY=1" in document
     assert "--workers 1" in document
     assert "--workers 4" not in document
@@ -183,6 +187,7 @@ def test_docker_workflows_deploy_the_intended_image() -> None:
     assert "QUARK_STRM_FRONTEND_IMAGE=quark-strm-frontend:test" in deploy_workflow
     assert "SMART_MEDIA_UID=$(id -u)" in deploy_workflow
     assert "SMART_MEDIA_GID=$(id -g)" in deploy_workflow
+    assert "mkdir -p logs strm data" in deploy_workflow
     assert "docker compose --profile frontend up --pull never -d" in deploy_workflow
     assert "http://127.0.0.1:8000/ready" in deploy_workflow
     assert "http://127.0.0.1:18080/" in deploy_workflow
@@ -199,6 +204,7 @@ def test_docker_workflows_deploy_the_intended_image() -> None:
     )
     assert "SMART_MEDIA_UID=$(id -u)" in publish_workflow
     assert "SMART_MEDIA_GID=$(id -g)" in publish_workflow
+    assert "mkdir -p logs strm data" in publish_workflow
     assert "docker compose --profile frontend up --pull never -d" in publish_workflow
     assert "http://127.0.0.1:8000/ready" in publish_workflow
     assert "http://127.0.0.1:18080/" in publish_workflow

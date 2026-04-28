@@ -28,6 +28,14 @@ def test_apply_env_overrides_updates_unified_provider_key(monkeypatch) -> None:
     assert overridden["ai"]["providers"][0]["api_key"] == "canonical-key"
 
 
+def test_apply_env_overrides_updates_database_path(monkeypatch) -> None:
+    monkeypatch.setenv("SMART_MEDIA_DATABASE", "data/quark_strm.db")
+
+    overridden = apply_env_overrides({})
+
+    assert overridden["database"] == "data/quark_strm.db"
+
+
 def test_apply_env_overrides_falls_back_to_legacy_provider_section(monkeypatch) -> None:
     monkeypatch.setenv("SMART_MEDIA_KIMI_API_KEY", "kimi-key")
 

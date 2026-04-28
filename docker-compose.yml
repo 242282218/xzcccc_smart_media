@@ -10,7 +10,7 @@ services:
       - "${SMART_MEDIA_EMBY_PROXY_PORT:-18097}:8000"
     volumes:
       - ./config.yaml:/app/config.yaml
-      - ./quark_strm.db:/app/quark_strm.db
+      - ./data:/app/data
       - ./strm:/app/strm
       - ./logs:/app/logs
     user: "${SMART_MEDIA_UID:-1000}:${SMART_MEDIA_GID:-1000}"
@@ -20,6 +20,7 @@ services:
       - .env
     environment:
       - CONFIG_PATH=/app/config.yaml
+      - SMART_MEDIA_DATABASE=${SMART_MEDIA_DATABASE:-data/quark_strm.db}
       - SMART_MEDIA_ENV=${SMART_MEDIA_ENV:-development}
       - SMART_MEDIA_LOG_FORMAT=${SMART_MEDIA_LOG_FORMAT:-json}
       - TZ=${TZ:-Asia/Shanghai}

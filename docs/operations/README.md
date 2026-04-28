@@ -68,6 +68,7 @@ docker compose up -d
 | `TZ` | 容器时区 | `Asia/Shanghai` |
 | `SMART_MEDIA_UID` | 后端容器运行 UID，用于写入 bind mount 目录 | `1000` |
 | `SMART_MEDIA_GID` | 后端容器运行 GID，用于写入 bind mount 目录 | `1000` |
+| `SMART_MEDIA_DATABASE` | Docker 部署时的 SQLite 数据库路径 | `data/quark_strm.db` |
 
 #### 生产安全与单 worker 约束
 
@@ -108,12 +109,12 @@ docker compose --profile frontend up -d
 #### Compose 挂载约定
 
 - `./config.yaml:/app/config.yaml`
-- `./quark_strm.db:/app/quark_strm.db`
+- `./data:/app/data`
 - `./strm:/app/strm`
 - `./logs:/app/logs`
 
 容器内始终通过 `CONFIG_PATH=/app/config.yaml` 读取配置，敏感值优先使用 `.env` 覆盖 `config.yaml`。认证密钥推荐使用 `SMART_MEDIA_SECURITY_API_KEY`；历史别名 `SMART_MEDIA_API_KEY` 与 `API_KEY` 仅保留兼容。
-后端容器默认以 `SMART_MEDIA_UID:SMART_MEDIA_GID` 运行；Linux bind mount 部署时应设置为宿主机运行用户的 `id -u` 与 `id -g`，确保 `logs/`、`strm/` 和 `quark_strm.db` 可写。
+后端容器默认以 `SMART_MEDIA_UID:SMART_MEDIA_GID` 运行；Linux bind mount 部署时应设置为宿主机运行用户的 `id -u` 与 `id -g`，确保 `logs/`、`strm/` 和 `data/` 可写。Docker 部署默认把 SQLite 放在 `data/quark_strm.db`，避免 WAL 模式需要在 `/app` 根目录创建 sidecar 文件。
 
 #### 本地运行产物目录约定
 

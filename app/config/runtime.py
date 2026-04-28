@@ -18,6 +18,7 @@ from app.core.env_aliases import AI_PROVIDER_API_KEY_ENV_PRIORITY, get_provider_
 ConfigModelT = TypeVar("ConfigModelT", bound=BaseModel)
 
 ENV_OVERRIDE_MAP: dict[str, list[str]] = {
+    "SMART_MEDIA_DATABASE": ["database"],
     "SMART_MEDIA_AI_API_KEY": ["api_keys", "ai_api_key"],
     "SMART_MEDIA_TMDB_API_KEY": ["tmdb", "api_key"],
     "SMART_MEDIA_QUARK_COOKIE": ["quark", "cookie"],
